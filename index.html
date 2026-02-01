@@ -9,7 +9,7 @@
   :root{
     --bg1:#ffe4e9;
     --bg2:#f7b7c3;
-    --card: rgba(255,255,255,.92);
+    --card: rgba(255,255,255,.94);
     --text:#1f2937;
     --accent:#ff4d6d;
     --accent2:#7c3aed;
@@ -57,12 +57,12 @@
     to{ transform: translate(var(--x1), var(--y1)) rotate(520deg); opacity:0; }
   }
 
-  /* ✅ Vertical card layout */
+  /* Card */
   .card{
-    width: min(520px, 96vw);
+    width: min(560px, 96vw);
     background: var(--card);
     backdrop-filter: blur(14px);
-    border: 1px solid rgba(255,255,255,.65);
+    border: 1px solid rgba(255,255,255,.7);
     border-radius: 34px;
     box-shadow: var(--shadow);
     padding: 28px 24px 34px;
@@ -78,23 +78,11 @@
     gap:.5rem;
     padding:8px 16px;
     border-radius:999px;
-    background:rgba(255,255,255,.75);
+    background:rgba(255,255,255,.82);
     border:1px solid rgba(0,0,0,.06);
     font-weight:600;
     font-size:14px;
     margin: 0 auto;
-  }
-
-  /* ✅ Image inside card (no crop) */
-  .posterImage{
-    width: 100%;
-    max-width: 420px;
-    height: auto;
-    margin: 12px auto 10px;
-    display: none; /* ✅ hidden until YES */
-    border-radius: 22px;
-    box-shadow: 0 20px 50px rgba(0,0,0,.25);
-    border: 1px solid rgba(255,255,255,.6);
   }
 
   h1{
@@ -109,17 +97,17 @@
     font-weight: 950;
   }
 
-  /* ✅ Glow after YES */
+  /* Glow after YES */
   body.yes-mode #winTitle{
     display:block;
     text-shadow:
-      0 0 10px rgba(255,77,109,.28),
-      0 0 26px rgba(124,58,237,.18);
+      0 0 10px rgba(255,77,109,.30),
+      0 0 28px rgba(124,58,237,.18);
   }
 
   .sub{
     margin: 0 auto;
-    max-width: 58ch;
+    max-width: 60ch;
     font-size: clamp(15px, 2.2vw, 18px);
     line-height: 1.55;
     opacity: .85;
@@ -166,17 +154,43 @@
 
   /* No starts normal on load */
   #no{
-    background: rgba(255,255,255,.92);
+    background: rgba(255,255,255,.94);
     color:#111827;
     border: 1px solid rgba(0,0,0,.08);
     position: static;
+  }
+
+  /* ✅ Click-to-open photo (hidden until YES) */
+  .photoWrap{
+    display:none;
+    margin: 14px auto 14px; /* ✅ space before & after */
+    width: min(440px, 92%);
+    border-radius: 22px;
+    overflow: hidden;
+    border: 2px solid rgba(255,255,255,.9);
+    box-shadow: 0 18px 44px rgba(0,0,0,.22);
+    background: #fff;
+  }
+  .photoWrap:active{ transform: scale(.995); }
+
+  .photoWrap img{
+    display:block;
+    width:100%;
+    height:auto;
+  }
+
+  .photoHint{
+    display:none;
+    font-size: 13px;
+    opacity: .68;
+    margin-top: -6px;
   }
 
   /* Success panel */
   .success{
     display:none;
     width: 100%;
-    margin: 14px auto 0;
+    margin: 8px auto 0;
     padding: 18px 18px;
     border-radius: 22px;
     background: rgba(124,58,237,.08);
@@ -204,25 +218,6 @@
     font-weight:800;
     line-height:1.45;
   }
-
-  /* Save link button */
-  .saveLink{
-    display:inline-flex;
-    gap:.5rem;
-    align-items:center;
-    justify-content:center;
-    margin: 14px auto 0;
-    padding: 10px 14px;
-    border-radius: 999px;
-    background: rgba(255,255,255,.88);
-    border: 1px solid rgba(0,0,0,.08);
-    text-decoration: none;
-    color: #111827;
-    font-weight: 800;
-    font-size: 14px;
-    box-shadow: 0 10px 22px rgba(0,0,0,.12);
-  }
-  .saveLink:active{ transform: scale(.98); }
 
   /* Heart burst */
   .burst{
@@ -263,9 +258,6 @@
   <main class="card">
     <div class="badge">💌 A very serious question (for science)</div>
 
-    <!-- ✅ Image inside card, revealed after YES -->
-    <img id="posterImage" class="posterImage" src="couple.jpg" alt="Us 💖">
-
     <h1 id="questionTitle">Will you be my Valentine, Rasika? 💘</h1>
     <h1 id="winTitle">YAYYYYY 💖✨ Valentine acquired. Now come here. 🫶</h1>
 
@@ -279,6 +271,12 @@
       <button id="no" aria-label="No">No 🙃</button>
     </div>
 
+    <!-- ✅ Photo appears AFTER YES, between title and invite -->
+    <a id="photoWrap" class="photoWrap" href="couple.jpg?v=5" target="_blank" rel="noopener" aria-label="Open photo">
+      <img src="couple.jpg?v=5" alt="Us 💖">
+    </a>
+    <div id="photoHint" class="photoHint">Tip: Tap the photo to open & save it 💾</div>
+
     <div class="success" id="success">
       <div class="burst" id="burst" aria-hidden="true"></div>
       <div class="successContent">
@@ -286,11 +284,6 @@
           💖 You are invited on Feb 13 to celebrate Valentines Date Night at Southern Hill Farms 💖
         </div>
         <p>Bring in your warm hug and lovey dovey kissable face 💘</p>
-
-        <!-- ✅ Save/open image (works on iPhone: opens image tab → long-press save) -->
-        <a class="saveLink" href="couple.jpg?v=2" target="_blank" rel="noopener">
-          💾 Open & Save our picture
-        </a>
       </div>
     </div>
 
@@ -324,12 +317,14 @@
   const success = document.getElementById('success');
   const sparkle = document.getElementById('sparkle');
   const burst = document.getElementById('burst');
-  const posterImage = document.getElementById('posterImage');
 
   const questionTitle = document.getElementById('questionTitle');
   const winTitle = document.getElementById('winTitle');
   const subtitle = document.getElementById('subtitle');
   const footer = document.getElementById('footer');
+
+  const photoWrap = document.getElementById('photoWrap');
+  const photoHint = document.getElementById('photoHint');
 
   // ✅ No is calm until interaction
   let noIsActive = false;
@@ -436,21 +431,28 @@
   yesBtn.addEventListener('click', ()=>{
     document.body.classList.add("yes-mode");
 
-    // ✅ reveal image
-    posterImage.style.display = "block";
-
+    // ✅ Swap title
     questionTitle.style.display = "none";
     winTitle.style.display = "block";
 
+    // ✅ Hide buttons + intro
     arena.style.display = "none";
     subtitle.style.display = "none";
     footer.style.display = "none";
 
+    // ✅ Show photo (click to open/save)
+    photoWrap.style.display = "block";
+    photoHint.style.display = "block";
+
+    // ✅ Show invite
     success.style.display = "block";
     requestAnimationFrame(()=> success.classList.add("show"));
 
     heartBurst();
     party();
+
+    // Scroll a tiny bit to make sure photo is visible on small screens
+    setTimeout(()=> winTitle.scrollIntoView({behavior:"smooth", block:"start"}), 50);
   });
 </script>
 </body>
