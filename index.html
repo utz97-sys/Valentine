@@ -1,418 +1,197 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Will you be my Valentine? 💘</title>
-  <style>
-    :root{
-      --bg1:#ffdde1;
-      --bg2:#ee9ca7;
-      --card:#ffffffcc;
-      --text:#1f2937;
-      --accent:#ff4d6d;
-      --accent2:#7c3aed;
-      --shadow: 0 20px 60px rgba(0,0,0,.18);
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      min-height:100vh;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      color:var(--text);
-      background: radial-gradient(circle at 20% 20%, #fff 0%, var(--bg1) 35%, var(--bg2) 100%);
-      overflow:hidden;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:20px;
-    }
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Will you be my Valentine? 💘</title>
 
-    .hearts{
-      position:fixed; inset:0;
-      pointer-events:none;
-      opacity:.18;
-      filter: blur(.2px);
-    }
-    .heart{
-      position:absolute;
-      font-size: clamp(16px, 2vw, 26px);
-      animation: floatUp linear infinite;
-    }
-    @keyframes floatUp{
-      from{ transform: translateY(20vh) rotate(0deg); opacity:0; }
-      10%{ opacity:.8; }
-      to{ transform: translateY(-120vh) rotate(360deg); opacity:0; }
-    }
+<style>
+:root{
+  --bg1:#ffdde1;
+  --bg2:#ee9ca7;
+  --card:#ffffffcc;
+  --text:#1f2937;
+  --accent:#ff4d6d;
+  --accent2:#7c3aed;
+  --shadow:0 20px 60px rgba(0,0,0,.18);
+}
+*{box-sizing:border-box}
 
-    .card{
-      width:min(760px, 94vw);
-      background:var(--card);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,.55);
-      border-radius: 28px;
-      box-shadow: var(--shadow);
-      padding: 28px 26px 34px;
-      text-align:center;
-      position:relative;
-    }
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:.5rem;
-      padding:8px 14px;
-      border-radius:999px;
-      background:rgba(255,255,255,.75);
-      border:1px solid rgba(0,0,0,.06);
-      font-weight:600;
-      font-size:14px;
-      margin-bottom:14px;
-    }
+body{
+  margin:0;
+  min-height:100vh;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto;
+  background: radial-gradient(circle at 20% 20%, #fff 0%, var(--bg1) 35%, var(--bg2) 100%);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:32px;
+}
 
-    /* Main headline BEFORE clicking Yes */
-    #questionTitle{
-      margin: 6px 0 8px;
-      font-size: clamp(28px, 4vw, 44px);
-      letter-spacing: -0.02em;
-    }
+.hearts{
+  position:fixed; inset:0;
+  pointer-events:none;
+  opacity:.18;
+}
 
-    /* Main headline AFTER clicking Yes */
-    #winTitle{
-      display:none;
-      margin: 6px 0 8px;
-      font-size: clamp(28px, 4vw, 44px);
-      letter-spacing: -0.02em;
-      font-weight: 900;
-      color: #111827;
-    }
+.card{
+  width:min(780px,96vw);
+  background:var(--card);
+  backdrop-filter: blur(10px);
+  border-radius:30px;
+  box-shadow:var(--shadow);
+  padding:42px 34px 46px;
+  text-align:center;
+}
 
-    .sub{
-      margin: 0 auto 22px;
-      max-width: 56ch;
-      font-size: clamp(15px, 2.2vw, 18px);
-      line-height:1.45;
-      opacity:.85;
-    }
+.badge{
+  display:inline-block;
+  padding:8px 16px;
+  border-radius:999px;
+  background:#ffffffaa;
+  font-weight:600;
+  font-size:14px;
+  margin-bottom:22px;
+}
 
-    .btnRow{
-      position:relative;
-      height: 90px;
-      margin-top: 18px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:18px;
-      flex-wrap:wrap;
-    }
+h1{
+  margin:0 0 16px;
+  font-size:clamp(30px,4.2vw,46px);
+  line-height:1.2;
+}
 
-    button{
-      appearance:none;
-      border:0;
-      border-radius: 999px;
-      padding: 14px 22px;
-      font-size: 18px;
-      font-weight: 700;
-      cursor:pointer;
-      user-select:none;
-      box-shadow: 0 12px 26px rgba(0,0,0,.14);
-      transform: translateZ(0);
-      transition: transform .12s ease, filter .12s ease;
-    }
-    button:active{ transform: scale(.98); }
+#winTitle{
+  display:none;
+  font-weight:900;
+}
 
-    #yes{
-      background: linear-gradient(135deg, var(--accent), #ff8fab);
-      color:white;
-    }
-    #yes:hover{ filter: brightness(1.03); transform: translateY(-1px); }
+.sub{
+  max-width:56ch;
+  margin:0 auto 34px;
+  font-size:18px;
+  opacity:.85;
+  line-height:1.5;
+}
 
-    #no{
-      background: rgba(255,255,255,.9);
-      color:#111827;
-      border: 1px solid rgba(0,0,0,.08);
-      position:absolute;
-      left: 56%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-    }
+/* BUTTON AREA – FIXED */
+.btnRow{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:22px;
+  margin:36px 0 22px;
+  position:relative;
+}
 
-    .footer{
-      margin-top: 18px;
-      font-size: 13px;
-      opacity:.65;
-    }
+button{
+  border:0;
+  border-radius:999px;
+  padding:14px 28px;
+  font-size:18px;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow:0 12px 26px rgba(0,0,0,.14);
+}
 
-    .success{
-      display:none;
-      margin-top: 18px;
-      padding: 16px 16px;
-      border-radius: 18px;
-      background: rgba(124,58,237,.08);
-      border: 1px solid rgba(124,58,237,.18);
-      position: relative;
-      overflow: hidden;
+#yes{
+  background:linear-gradient(135deg,var(--accent),#ff8fab);
+  color:#fff;
+}
 
-      opacity: 0;
-      transform: translateY(-6px) scale(.98);
-      transition: opacity .35s ease, transform .35s ease;
-    }
-    .success.show{
-      opacity: 1;
-      transform: translateY(-18px) scale(1);
-    }
+#no{
+  background:#fff;
+  border:1px solid #ddd;
+}
 
-    /* Invitation line inside success box */
-    .inviteLine{
-      margin: 0 0 8px;
-      font-size: clamp(16px, 2.2vw, 20px);
-      font-weight: 900;
-      color: var(--accent2);
-      letter-spacing: -0.01em;
-    }
-    .success p{
-      margin: 0;
-      font-weight: 800;
-    }
+/* SUCCESS BOX – MORE BREATHING ROOM */
+.success{
+  display:none;
+  margin-top:48px;
+  padding:26px 28px;
+  border-radius:22px;
+  background:rgba(124,58,237,.08);
+  border:1px solid rgba(124,58,237,.2);
+  opacity:0;
+  transform:translateY(12px);
+  transition:all .4s ease;
+}
 
-    /* Heart burst behind success panel */
-    .burst{
-      position:absolute;
-      left: 50%;
-      top: 55%;
-      transform: translate(-50%, -50%);
-      pointer-events:none;
-      z-index: 0;
-    }
-    .burst span{
-      position:absolute;
-      font-size: 22px;
-      opacity: 0;
-      transform: translate(0,0) scale(.8);
-      animation: burst 900ms ease-out forwards;
-      filter: drop-shadow(0 6px 10px rgba(0,0,0,.12));
-    }
-    @keyframes burst{
-      0%{ opacity:0; transform: translate(0,0) scale(.8); }
-      15%{ opacity:1; }
-      100%{ opacity:0; transform: translate(var(--dx), var(--dy)) scale(1.15); }
-    }
-    .successContent{ position:relative; z-index:1; }
+.success.show{
+  opacity:1;
+  transform:translateY(0);
+}
 
-    .sparkle{
-      position:fixed;
-      pointer-events:none;
-      inset:0;
-      overflow:hidden;
-    }
-    .confetti{
-      position:absolute;
-      width:10px; height:14px;
-      border-radius:3px;
-      opacity:.95;
-      animation: pop 1.2s ease-out forwards;
-    }
-    @keyframes pop{
-      from{ transform: translate(var(--x0), var(--y0)) rotate(0deg); }
-      to{ transform: translate(var(--x1), var(--y1)) rotate(520deg); opacity:0; }
-    }
-  </style>
+.inviteLine{
+  font-size:20px;
+  font-weight:900;
+  color:var(--accent2);
+  margin-bottom:14px;
+}
+
+.footer{
+  margin-top:28px;
+  font-size:13px;
+  opacity:.6;
+}
+</style>
 </head>
+
 <body>
-  <div class="hearts" aria-hidden="true" id="hearts"></div>
-  <div class="sparkle" aria-hidden="true" id="sparkle"></div>
+<div class="hearts"></div>
 
-  <main class="card">
-    <div class="badge">💌 A very serious question (for science)</div>
+<main class="card">
+  <div class="badge">💌 A very serious question (for science)</div>
 
-    <!-- Before Yes -->
-    <h1 id="questionTitle">Will you be my Valentine, Rasika? 💘</h1>
+  <h1 id="questionTitle">Will you be my Valentine, Rasika? 💘</h1>
+  <h1 id="winTitle">YAYYYYY 💖✨ Valentine acquired. Now come here. 🫶</h1>
 
-    <!-- After Yes -->
-    <h1 id="winTitle">YAYYYYY 💖✨ Valentine acquired. Now come here. 🫶</h1>
+  <p class="sub" id="subtitle">
+    I promise snacks, cozy vibes, and an unreasonable amount of affection.
+    One button leads to happiness. The other… is shy.
+  </p>
 
-    <p class="sub" id="subtitle">
-      I promise snacks, cozy vibes, and an unreasonable amount of affection.
-      One button leads to happiness. The other… is shy.
-    </p>
+  <div class="btnRow" id="arena">
+    <button id="yes">Yes! 🥰</button>
+    <button id="no">No 🙃</button>
+  </div>
 
-    <div class="btnRow" id="arena">
-      <button id="yes">Yes! 🥰</button>
-      <button id="no" aria-label="No">No 🙃</button>
+  <div class="success" id="success">
+    <div class="inviteLine">
+      💖 You are invited on Feb 13 to celebrate Valentines Date Night at Southern Hill Farms 💖
     </div>
+    <p>Bring in your warm hug and lovey dovey kissable face 💘</p>
+  </div>
 
-    <div class="success" id="success">
-      <div class="burst" id="burst" aria-hidden="true"></div>
+  <div class="footer" id="footer">
+    Tip: Works best on phones too. The “No” button is… slippery.
+  </div>
+</main>
 
-      <div class="successContent">
-        <div class="inviteLine">
-          💖 You are invited on Feb 13 to celebrate Valentines Date night at Southern Hill Farms 💖
-        </div>
-        <p>Bring in your warm hug and lovey dovey kissable face 💘</p>
-      </div>
-    </div>
+<script>
+const yes=document.getElementById("yes");
+const no=document.getElementById("no");
+const arena=document.getElementById("arena");
+const success=document.getElementById("success");
+const qt=document.getElementById("questionTitle");
+const wt=document.getElementById("winTitle");
+const sub=document.getElementById("subtitle");
+const footer=document.getElementById("footer");
 
-    <div class="footer" id="footer">Tip: Works best on phones too. The “No” button is… slippery.</div>
-  </main>
+/* TELEPORT NO */
+no.addEventListener("mouseover",()=>{
+  no.style.transform=`translate(${Math.random()*160-80}px,${Math.random()*80-40}px)`;
+});
 
-  <script>
-    // Floating hearts background
-    const hearts = document.getElementById('hearts');
-    const heartChars = ["💗","💖","💘","💝","💕","💞","❤️"];
-    const makeHearts = () => {
-      hearts.innerHTML = "";
-      const count = 26;
-      for (let i=0;i<count;i++){
-        const s = document.createElement('div');
-        s.className = "heart";
-        s.textContent = heartChars[Math.floor(Math.random()*heartChars.length)];
-        s.style.left = Math.random()*100 + "vw";
-        s.style.top = (60 + Math.random()*60) + "vh";
-        s.style.animationDuration = (6 + Math.random()*8) + "s";
-        s.style.animationDelay = (-Math.random()*10) + "s";
-        hearts.appendChild(s);
-      }
-    };
-    makeHearts();
-    window.addEventListener('resize', makeHearts);
-
-    const arena = document.getElementById('arena');
-    const noBtn = document.getElementById('no');
-    const yesBtn = document.getElementById('yes');
-    const success = document.getElementById('success');
-    const sparkle = document.getElementById('sparkle');
-    const burst = document.getElementById('burst');
-
-    const questionTitle = document.getElementById('questionTitle');
-    const winTitle = document.getElementById('winTitle');
-    const subtitle = document.getElementById('subtitle');
-    const footer = document.getElementById('footer');
-
-    function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
-
-    function moveNoTo(clientX, clientY, immediate=false){
-      const rect = arena.getBoundingClientRect();
-      const btnRect = noBtn.getBoundingClientRect();
-      const w = btnRect.width;
-      const h = btnRect.height;
-
-      let x = clientX - rect.left;
-      let y = clientY - rect.top;
-
-      x = clamp(x, w/2 + 4, rect.width  - w/2 - 4);
-      y = clamp(y, h/2 + 4, rect.height - h/2 - 4);
-
-      if (immediate) noBtn.style.transition = "none";
-      else noBtn.style.transition = "transform .12s ease";
-      noBtn.style.left = x + "px";
-      noBtn.style.top  = y + "px";
-      noBtn.style.transform = "translate(-50%, -50%)";
-      if (immediate) requestAnimationFrame(()=> noBtn.style.transition = "transform .12s ease");
-    }
-
-    function placeNoInitial(){
-      const rect = arena.getBoundingClientRect();
-      const x = rect.left + rect.width * 0.68;
-      const y = rect.top + rect.height * 0.50;
-      moveNoTo(x, y, true);
-    }
-
-    // TELEPORT MODE
-    function teleportNo(){
-      const rect = arena.getBoundingClientRect();
-      const btnRect = noBtn.getBoundingClientRect();
-      const w = btnRect.width;
-      const h = btnRect.height;
-
-      const x = rect.left + (w/2 + 6) + Math.random() * (rect.width  - w - 12);
-      const y = rect.top  + (h/2 + 6) + Math.random() * (rect.height - h - 12);
-
-      moveNoTo(x, y);
-    }
-
-    function handlePointerMove(e){
-      const pX = e.clientX, pY = e.clientY;
-      const b = noBtn.getBoundingClientRect();
-      const bx = b.left + b.width/2;
-      const by = b.top  + b.height/2;
-      const dist = Math.hypot(bx - pX, by - pY);
-
-      if (dist < 140) teleportNo();
-    }
-    arena.addEventListener('mousemove', handlePointerMove);
-
-    noBtn.addEventListener('click', (e)=>{ teleportNo(); e.preventDefault(); });
-    noBtn.addEventListener('touchstart', (e)=>{ teleportNo(); e.preventDefault(); }, {passive:false});
-
-    function heartBurst(){
-      burst.innerHTML = "";
-      const emojis = ["💖","💘","💕","💞","💝","💗","❤️"];
-      const n = 16;
-      for (let i=0;i<n;i++){
-        const s = document.createElement("span");
-        s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-
-        const angle = (Math.PI * 2) * (i / n);
-        const radius = 90 + Math.random()*40;
-        const dx = Math.cos(angle) * radius + (Math.random()*14 - 7);
-        const dy = Math.sin(angle) * radius + (Math.random()*14 - 7);
-
-        s.style.setProperty("--dx", dx + "px");
-        s.style.setProperty("--dy", dy + "px");
-        s.style.animationDelay = (Math.random()*80) + "ms";
-        burst.appendChild(s);
-      }
-    }
-
-    function party(){
-      sparkle.innerHTML = "";
-      const n = 90;
-      const { innerWidth: W, innerHeight: H } = window;
-      for(let i=0;i<n;i++){
-        const d = document.createElement('div');
-        d.className = "confetti";
-        const hue = Math.floor(Math.random()*360);
-        d.style.background = `hsl(${hue} 90% 60%)`;
-
-        const x0 = (W/2) + (Math.random()*40 - 20);
-        const y0 = (H/2) + (Math.random()*40 - 20);
-        const x1 = x0 + (Math.random()*900 - 450);
-        const y1 = y0 + (Math.random()*700 - 350);
-
-        d.style.setProperty("--x0", x0 + "px");
-        d.style.setProperty("--y0", y0 + "px");
-        d.style.setProperty("--x1", x1 + "px");
-        d.style.setProperty("--y1", y1 + "px");
-        d.style.left = "0px";
-        d.style.top  = "0px";
-        sparkle.appendChild(d);
-      }
-      setTimeout(()=> sparkle.innerHTML="", 1400);
-    }
-
-    // YES action
-    yesBtn.addEventListener('click', ()=>{
-      questionTitle.style.display = "none";
-      winTitle.style.display = "block";
-
-      // Remove both buttons row (removes YES button as requested)
-      arena.style.display = "none";
-
-      // Hide the extra lines
-      subtitle.style.display = "none";
-      footer.style.display = "none";
-
-      // Pull invite into the space where buttons were
-      success.style.marginTop = "6px";
-
-      // Show invite
-      success.style.display = "block";
-      requestAnimationFrame(()=> success.classList.add("show"));
-
-      heartBurst();
-      party();
-    });
-
-    placeNoInitial();
-  </script>
+/* YES ACTION */
+yes.addEventListener("click",()=>{
+  qt.style.display="none";
+  wt.style.display="block";
+  arena.style.display="none";
+  sub.style.display="none";
+  footer.style.display="none";
+  success.style.display="block";
+  requestAnimationFrame(()=>success.classList.add("show"));
+});
+</script>
 </body>
 </html>
