@@ -153,15 +153,15 @@
       overflow: hidden;
 
       opacity: 0;
-      transform: translateY(10px) scale(.98);
+      transform: translateY(-6px) scale(.98);
       transition: opacity .35s ease, transform .35s ease;
     }
     .success.show{
       opacity: 1;
-      transform: translateY(0) scale(1);
+      transform: translateY(-18px) scale(1);
     }
 
-    /* Invitation text (now NOT the title) */
+    /* Invitation line inside success box */
     .inviteLine{
       margin: 0 0 8px;
       font-size: clamp(16px, 2.2vw, 20px);
@@ -221,7 +221,7 @@
   <div class="hearts" aria-hidden="true" id="hearts"></div>
   <div class="sparkle" aria-hidden="true" id="sparkle"></div>
 
-  <main class="card" id="card">
+  <main class="card">
     <div class="badge">💌 A very serious question (for science)</div>
 
     <!-- Before Yes -->
@@ -391,18 +391,20 @@
 
     // YES action
     yesBtn.addEventListener('click', ()=>{
-      // Replace the big title
       questionTitle.style.display = "none";
       winTitle.style.display = "block";
 
-      // Remove the Yes button + No button row completely
+      // Remove both buttons row (removes YES button as requested)
       arena.style.display = "none";
 
-      // Hide extra text/tip (optional but matches your request vibe)
+      // Hide the extra lines
       subtitle.style.display = "none";
       footer.style.display = "none";
 
-      // Show invite box
+      // Pull invite into the space where buttons were
+      success.style.marginTop = "6px";
+
+      // Show invite
       success.style.display = "block";
       requestAnimationFrame(()=> success.classList.add("show"));
 
