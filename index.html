@@ -27,6 +27,7 @@
       justify-content:center;
       padding:20px;
     }
+
     .hearts{
       position:fixed; inset:0;
       pointer-events:none;
@@ -79,6 +80,7 @@
       line-height:1.45;
       opacity:.85;
     }
+
     .btnRow{
       position:relative;
       height: 90px;
@@ -89,6 +91,7 @@
       gap:18px;
       flex-wrap:wrap;
     }
+
     button{
       appearance:none;
       border:0;
@@ -103,11 +106,13 @@
       transition: transform .12s ease, filter .12s ease;
     }
     button:active{ transform: scale(.98); }
+
     #yes{
       background: linear-gradient(135deg, var(--accent), #ff8fab);
       color:white;
     }
     #yes:hover{ filter: brightness(1.03); transform: translateY(-1px); }
+
     #no{
       background: rgba(255,255,255,.9);
       color:#111827;
@@ -117,11 +122,13 @@
       top: 50%;
       transform: translate(-50%, -50%);
     }
+
     .footer{
       margin-top: 18px;
       font-size: 13px;
       opacity:.65;
     }
+
     .success{
       display:none;
       margin-top: 18px;
@@ -131,6 +138,20 @@
       border: 1px solid rgba(124,58,237,.18);
       font-weight:700;
     }
+
+    /* Invitation title styling */
+    #inviteTitle{
+      margin: 0 0 8px;
+      font-size: clamp(20px, 3vw, 26px);
+      font-weight: 900;
+      color: var(--accent2);
+      letter-spacing: -0.01em;
+    }
+    .success p{
+      margin: 0;
+      font-weight: 800;
+    }
+
     .sparkle{
       position:fixed;
       pointer-events:none;
@@ -168,7 +189,16 @@
     </div>
 
     <div class="success" id="success">
-      YAYYYYY 💖✨ Valentine acquired. Now come here. 🫶
+      <h2 id="inviteTitle">
+        💖 You are invited on Feb 13 to celebrate Valentines Date night at Southern Hill Farms 💖
+      </h2>
+      <p>
+        Bring in your warm hug and lovey dovey kissable face 💘
+      </p>
+      <div style="height:10px"></div>
+      <p>
+        YAYYYYY 💖✨ Valentine acquired. Now come here. 🫶
+      </p>
     </div>
 
     <div class="footer">Tip: Works best on phones too. The “No” button is… slippery.</div>
@@ -201,14 +231,6 @@
     const success = document.getElementById('success');
     const sparkle = document.getElementById('sparkle');
 
-    // Place the "No" button initially so it doesn't overlap on small screens
-    function placeNoInitial(){
-      const rect = arena.getBoundingClientRect();
-      const x = rect.left + rect.width * 0.68;
-      const y = rect.top + rect.height * 0.50;
-      moveNoTo(x, y, true);
-    }
-
     function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
 
     function moveNoTo(clientX, clientY, immediate=false){
@@ -225,7 +247,6 @@
       x = clamp(x, w/2 + 4, rect.width  - w/2 - 4);
       y = clamp(y, h/2 + 4, rect.height - h/2 - 4);
 
-      // Apply
       if (immediate) noBtn.style.transition = "none";
       else noBtn.style.transition = "transform .12s ease";
       noBtn.style.left = x + "px";
@@ -234,31 +255,28 @@
       if (immediate) requestAnimationFrame(()=> noBtn.style.transition = "transform .12s ease");
     }
 
-    function dodge(pointerX, pointerY){
+    // Initial placement
+    function placeNoInitial(){
       const rect = arena.getBoundingClientRect();
-      const btnRect = noBtn.getBoundingClientRect();
-      const bx = btnRect.left + btnRect.width/2;
-      const by = btnRect.top  + btnRect.height/2;
-
-      // Vector away from pointer
-      let dx = bx - pointerX;
-      let dy = by - pointerY;
-
-      const dist = Math.hypot(dx, dy) || 1;
-      dx /= dist; dy /= dist;
-
-      // Jump distance scales with closeness (spicier near the cursor)
-      const close = clamp(1 - (dist / 220), 0, 1);
-      const jump = 90 + close * 130;
-
-      // New target in client coords
-      const tx = bx + dx * jump + (Math.random()*40 - 20);
-      const ty = by + dy * jump + (Math.random()*26 - 13);
-
-      moveNoTo(tx, ty);
+      const x = rect.left + rect.width * 0.68;
+      const y = rect.top + rect.height * 0.50;
+      moveNoTo(x, y, true);
     }
 
-    // Trigger dodge when the pointer gets too close or tries to tap it
+    // --- TELEPORT MODE ---
+    function teleportNo(){
+      const rect = arena.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+      const w = btnRect.width;
+      const h = btnRect.height;
+
+      const x = rect.left + (w/2 + 6) + Math.random() * (rect.width  - w - 12);
+      const y = rect.top  + (h/2 + 6) + Math.random() * (rect.height - h - 12);
+
+      moveNoTo(x, y);
+    }
+
+    // Teleport when pointer gets close (mouse)
     function handlePointerMove(e){
       const pX = e.clientX, pY = e.clientY;
       const b = noBtn.getBoundingClientRect();
@@ -266,24 +284,20 @@
       const by = b.top  + b.height/2;
       const dist = Math.hypot(bx - pX, by - pY);
 
-      if (dist < 120) dodge(pX, pY);
+      if (dist < 140) teleportNo();
     }
-
-    // For mouse
     arena.addEventListener('mousemove', handlePointerMove);
 
-    // For touch: when they try to tap "No", it runs away
-    noBtn.addEventListener('touchstart', (e)=>{
-      const t = e.touches[0];
-      dodge(t.clientX, t.clientY);
-      e.preventDefault();
-    }, {passive:false});
-
-    // Also block clicking "No" (just in case)
+    // Teleport on tap/click attempts
     noBtn.addEventListener('click', (e)=>{
-      dodge(e.clientX, e.clientY);
+      teleportNo();
       e.preventDefault();
     });
+
+    noBtn.addEventListener('touchstart', (e)=>{
+      teleportNo();
+      e.preventDefault();
+    }, {passive:false});
 
     // YES action
     yesBtn.addEventListener('click', ()=>{
@@ -293,7 +307,7 @@
       party();
     });
 
-    // confetti-ish burst
+    // confetti burst
     function party(){
       sparkle.innerHTML = "";
       const n = 90;
@@ -301,7 +315,6 @@
       for(let i=0;i<n;i++){
         const d = document.createElement('div');
         d.className = "confetti";
-        // random colors without hardcoding palette: use HSL hue
         const hue = Math.floor(Math.random()*360);
         d.style.background = `hsl(${hue} 90% 60%)`;
 
