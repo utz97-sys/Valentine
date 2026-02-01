@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Valentine Accepted 💖</title>
+  <style>
+    :root{
+      --bg1:#ffdde1;
+      --bg2:#ee9ca7;
+      --card:#ffffffcc;
+      --text:#1f2937;
+      --accent:#ff4d6d;
+      --shadow: 0 20px 60px rgba(0,0,0,.18);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color:var(--text);
+      background: radial-gradient(circle at 20% 20%, #fff 0%, var(--bg1) 35%, var(--bg2) 100%);
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+
+    .hearts{
+      position:fixed; inset:0;
+      pointer-events:none;
+      opacity:.22;
+    }
+    .heart{
+      position:absolute;
+      font-size: clamp(18px, 2.5vw, 30px);
+      animation: floatUp linear infinite;
+    }
+    @keyframes floatUp{
+      from{ transform: translateY(20vh) rotate(0deg); opacity:0; }
+      10%{ opacity:.9; }
+      to{ transform: translateY(-120vh) rotate(360deg); opacity:0; }
+    }
+
+    .card{
+      width:min(820px, 94vw);
+      background:var(--card);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,.55);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 30px 26px 28px;
+      text-align:center;
+    }
+
+    h1{
+      margin: 0 0 10px;
+      font-size: clamp(30px, 4.2vw, 48px);
+      letter-spacing: -0.02em;
+    }
+    .msg{
+      margin: 0 auto 18px;
+      max-width: 60ch;
+      font-size: clamp(16px, 2.3vw, 20px);
+      line-height:1.5;
+      font-weight: 700;
+    }
+
+    .sub{
+      margin: 0 auto 18px;
+      max-width: 60ch;
+      font-size: clamp(15px, 2.1vw, 18px);
+      line-height:1.5;
+      opacity:.85;
+    }
+
+    .btnRow{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-top: 8px;
+    }
+    a.button{
+      text-decoration:none;
+      display:inline-block;
+      border-radius:999px;
+      padding: 12px 18px;
+      font-weight:800;
+      font-size: 16px;
+      background: linear-gradient(135deg, var(--accent), #ff8fab);
+      color:white;
+      box-shadow: 0 12px 26px rgba(0,0,0,.14);
+      transition: transform .12s ease, filter .12s ease;
+    }
+    a.button:hover{ filter: brightness(1.03); transform: translateY(-1px); }
+  </style>
+</head>
+<body>
+  <div class="hearts" aria-hidden="true" id="hearts"></div>
+
+  <main class="card">
+    <h1>YAYYYYY 💖✨</h1>
+
+    <p class="msg">
+      You are invited on Feb 13 to celebrate Valentines Date night at Southern Hill Farms.
+      Bring in your warm hug and lovey dovey kissable face 💘
+    </p>
+
+    <p class="sub">
+      (This message was delivered with 100% sincerity and 0% chill.)
+    </p>
+
+    <div class="btnRow">
+      <a class="button" href="./">Back to the question 💌</a>
+    </div>
+  </main>
+
+  <script>
+    const hearts = document.getElementById('hearts');
+    const heartChars = ["💗","💖","💘","💝","💕","💞","❤️","😍","😘"];
+    function makeHearts(){
+      hearts.innerHTML = "";
+      const count = 34;
+      for (let i=0;i<count;i++){
+        const s = document.createElement('div');
+        s.className = "heart";
+        s.textContent = heartChars[Math.floor(Math.random()*heartChars.length)];
+        s.style.left = Math.random()*100 + "vw";
+        s.style.top = (60 + Math.random()*70) + "vh";
+        s.style.animationDuration = (6 + Math.random()*8) + "s";
+        s.style.animationDelay = (-Math.random()*10) + "s";
+        hearts.appendChild(s);
+      }
+    }
+    makeHearts();
+    window.addEventListener('resize', makeHearts);
+  </script>
+</body>
+</html>
