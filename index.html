@@ -9,7 +9,7 @@
   :root{
     --bg1:#ffdde1;
     --bg2:#ee9ca7;
-    --card:#ffffffcc;
+    --card: rgba(255,255,255,.88);
     --text:#1f2937;
     --accent:#ff4d6d;
     --accent2:#7c3aed;
@@ -22,12 +22,26 @@
     min-height:100vh;
     font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     color:var(--text);
-    background: radial-gradient(circle at 20% 20%, #fff 0%, var(--bg1) 35%, var(--bg2) 100%);
+
+    /* ✅ Background image is hidden until yes-mode sets --bgimg */
+    background:
+      linear-gradient(rgba(255,221,225,.82), rgba(238,156,167,.82)),
+      var(--bgimg, none);
+    background-size: contain;      /* ✅ shows whole image (no crop) */
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+
     display:flex;
     align-items:center;
     justify-content:center;
     padding:28px 16px;
-    overflow:auto; /* ✅ allow scrolling (mobile too) */
+    overflow:auto;                /* ✅ allow scroll on mobile */
+  }
+
+  /* ✅ reveal the background image after YES */
+  body.yes-mode{
+    --bgimg: url("couple.jpg");
   }
 
   /* Floating hearts */
@@ -57,16 +71,16 @@
     to{ transform: translate(var(--x1), var(--y1)) rotate(520deg); opacity:0; }
   }
 
-  /* Card: scrollable if content is tall */
+  /* Card: readable over background */
   .card{
     width:min(820px, 96vw);
     max-height: calc(100vh - 80px);
     overflow:auto;
     -webkit-overflow-scrolling: touch;
 
-    background:var(--card);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,.55);
+    background: var(--card);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,.65);
     border-radius: 30px;
     box-shadow: var(--shadow);
     padding: 30px 26px 34px;
@@ -89,22 +103,6 @@
     font-weight:600;
     font-size:14px;
     margin: 0 auto;
-  }
-
-  /* Image banner (visible on load, but capped so no scrolling needed) */
-  .photoBanner{
-    width: min(520px, 92%);
-    aspect-ratio: 3 / 4;
-    object-fit: cover;
-    object-position: center top;
-    border-radius: 26px;
-    margin: 10px auto 6px;
-    box-shadow: 0 18px 44px rgba(0,0,0,.18);
-    border: 1px solid rgba(255,255,255,.6);
-    display:block;
-
-    /* ✅ prevents image from dominating the card */
-    max-height: clamp(180px, 28vh, 240px);
   }
 
   h1{
@@ -132,11 +130,11 @@
     display:flex;
     justify-content:center;
     align-items:center;
-    gap: 32px;          /* ✅ space between Yes and No */
+    gap: 32px;          /* ✅ real spacing between buttons */
     margin-top: 10px;
     margin-bottom: 6px;
-    position: relative; /* needed for teleport positioning */
-    height: 90px;
+    position: relative; /* needed for teleport */
+    height: 92px;
   }
 
   button{
@@ -206,6 +204,25 @@
     line-height:1.45;
   }
 
+  /* Save link button */
+  .saveLink{
+    display:inline-flex;
+    gap:.5rem;
+    align-items:center;
+    justify-content:center;
+    margin: 14px auto 0;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.85);
+    border: 1px solid rgba(0,0,0,.08);
+    text-decoration: none;
+    color: #111827;
+    font-weight: 800;
+    font-size: 14px;
+    box-shadow: 0 10px 22px rgba(0,0,0,.12);
+  }
+  .saveLink:active{ transform: scale(.98); }
+
   /* Heart burst */
   .burst{
     position:absolute;
@@ -253,9 +270,6 @@
   <main class="card">
     <div class="badge">💌 A very serious question (for science)</div>
 
-    <!-- ✅ Upload your new image as couple.jpg -->
-    <img class="photoBanner" src="couple.jpg" alt="Us 💖">
-
     <h1 id="questionTitle">Will you be my Valentine, Rasika? 💘</h1>
     <h1 id="winTitle">YAYYYYY 💖✨ Valentine acquired. Now come here. 🫶</h1>
 
@@ -276,6 +290,11 @@
           💖 You are invited on Feb 13 to celebrate Valentines Date Night at Southern Hill Farms 💖
         </div>
         <p>Bring in your warm hug and lovey dovey kissable face 💘</p>
+
+        <!-- ✅ “Save our picture” link -->
+        <a class="saveLink" href="couple.jpg" target="_blank" rel="noopener">
+          💾 Open & Save our picture
+        </a>
       </div>
     </div>
 
@@ -315,14 +334,14 @@
   const subtitle = document.getElementById('subtitle');
   const footer = document.getElementById('footer');
 
-  // ✅ No is calm until the first interaction
+  // ✅ No is calm until interaction
   let noIsActive = false;
 
   function activateNoTeleport(){
     if(noIsActive) return;
     noIsActive = true;
 
-    // convert current position to absolute so it won't "jump"
+    // convert current position to absolute (no jump)
     const rect = arena.getBoundingClientRect();
     const btnRect = noBtn.getBoundingClientRect();
 
@@ -347,16 +366,22 @@
     noBtn.style.top  = y + "px";
   }
 
-  // First mouse movement anywhere activates "slippery mode"
-  document.addEventListener("mousemove", activateNoTeleport, { once:true });
+  // ✅ Desktop: activate only after real mouse movement
+  document.addEventListener("pointermove", (e)=>{
+    if(e.pointerType === "mouse") activateNoTeleport();
+  }, { once:true });
 
-  // If the pointer gets near No, it escapes (after activation)
-  noBtn.addEventListener("mouseenter", ()=>{
-    activateNoTeleport();
-    teleportNo();
+  // ✅ Desktop: once active, if mouse gets close, it escapes
+  arena.addEventListener("mousemove", (e)=>{
+    if(!noIsActive) return;
+    const b = noBtn.getBoundingClientRect();
+    const bx = b.left + b.width/2;
+    const by = b.top  + b.height/2;
+    const dist = Math.hypot(bx - e.clientX, by - e.clientY);
+    if(dist < 140) teleportNo();
   });
 
-  // Mobile touch/click makes it escape
+  // ✅ Mobile: only move when touched/clicked
   noBtn.addEventListener("touchstart", (e)=>{
     activateNoTeleport();
     teleportNo();
@@ -412,17 +437,15 @@
   }
 
   yesBtn.addEventListener('click', ()=>{
-    document.body.classList.add("yes-mode");
+    document.body.classList.add("yes-mode"); // ✅ reveals background image
 
     questionTitle.style.display = "none";
     winTitle.style.display = "block";
 
-    // Remove buttons + extra lines
     arena.style.display = "none";
     subtitle.style.display = "none";
     footer.style.display = "none";
 
-    // Show invite
     success.style.display = "block";
     requestAnimationFrame(()=> success.classList.add("show"));
 
