@@ -46,7 +46,7 @@
     }
 
     .card{
-      width:min(720px, 92vw);
+      width:min(760px, 94vw);
       background:var(--card);
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255,255,255,.55);
@@ -68,14 +68,27 @@
       font-size:14px;
       margin-bottom:14px;
     }
-    h1{
+
+    /* Main headline BEFORE clicking Yes */
+    #questionTitle{
       margin: 6px 0 8px;
       font-size: clamp(28px, 4vw, 44px);
       letter-spacing: -0.02em;
     }
+
+    /* Main headline AFTER clicking Yes */
+    #winTitle{
+      display:none;
+      margin: 6px 0 8px;
+      font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: -0.02em;
+      font-weight: 900;
+      color: #111827;
+    }
+
     .sub{
       margin: 0 auto 22px;
-      max-width: 52ch;
+      max-width: 56ch;
       font-size: clamp(15px, 2.2vw, 18px);
       line-height:1.45;
       opacity:.85;
@@ -117,7 +130,7 @@
       background: rgba(255,255,255,.9);
       color:#111827;
       border: 1px solid rgba(0,0,0,.08);
-      position:absolute; /* so it can move freely */
+      position:absolute;
       left: 56%;
       top: 50%;
       transform: translate(-50%, -50%);
@@ -132,17 +145,26 @@
     .success{
       display:none;
       margin-top: 18px;
-      padding: 14px 16px;
+      padding: 16px 16px;
       border-radius: 18px;
       background: rgba(124,58,237,.08);
       border: 1px solid rgba(124,58,237,.18);
-      font-weight:700;
+      position: relative;
+      overflow: hidden;
+
+      opacity: 0;
+      transform: translateY(10px) scale(.98);
+      transition: opacity .35s ease, transform .35s ease;
+    }
+    .success.show{
+      opacity: 1;
+      transform: translateY(0) scale(1);
     }
 
-    /* Invitation title styling */
-    #inviteTitle{
+    /* Invitation text (now NOT the title) */
+    .inviteLine{
       margin: 0 0 8px;
-      font-size: clamp(20px, 3vw, 26px);
+      font-size: clamp(16px, 2.2vw, 20px);
       font-weight: 900;
       color: var(--accent2);
       letter-spacing: -0.01em;
@@ -151,6 +173,30 @@
       margin: 0;
       font-weight: 800;
     }
+
+    /* Heart burst behind success panel */
+    .burst{
+      position:absolute;
+      left: 50%;
+      top: 55%;
+      transform: translate(-50%, -50%);
+      pointer-events:none;
+      z-index: 0;
+    }
+    .burst span{
+      position:absolute;
+      font-size: 22px;
+      opacity: 0;
+      transform: translate(0,0) scale(.8);
+      animation: burst 900ms ease-out forwards;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.12));
+    }
+    @keyframes burst{
+      0%{ opacity:0; transform: translate(0,0) scale(.8); }
+      15%{ opacity:1; }
+      100%{ opacity:0; transform: translate(var(--dx), var(--dy)) scale(1.15); }
+    }
+    .successContent{ position:relative; z-index:1; }
 
     .sparkle{
       position:fixed;
@@ -177,8 +223,14 @@
 
   <main class="card" id="card">
     <div class="badge">💌 A very serious question (for science)</div>
-    <h1>Will you be my Valentine, Rasika? 💘</h1>
-    <p class="sub">
+
+    <!-- Before Yes -->
+    <h1 id="questionTitle">Will you be my Valentine, Rasika? 💘</h1>
+
+    <!-- After Yes -->
+    <h1 id="winTitle">YAYYYYY 💖✨ Valentine acquired. Now come here. 🫶</h1>
+
+    <p class="sub" id="subtitle">
       I promise snacks, cozy vibes, and an unreasonable amount of affection.
       One button leads to happiness. The other… is shy.
     </p>
@@ -189,23 +241,21 @@
     </div>
 
     <div class="success" id="success">
-      <h2 id="inviteTitle">
-        💖 You are invited on Feb 13 to celebrate Valentines Date night at Southern Hill Farms 💖
-      </h2>
-      <p>
-        Bring in your warm hug and lovey dovey kissable face 💘
-      </p>
-      <div style="height:10px"></div>
-      <p>
-        YAYYYYY 💖✨ Valentine acquired. Now come here. 🫶
-      </p>
+      <div class="burst" id="burst" aria-hidden="true"></div>
+
+      <div class="successContent">
+        <div class="inviteLine">
+          💖 You are invited on Feb 13 to celebrate Valentines Date night at Southern Hill Farms 💖
+        </div>
+        <p>Bring in your warm hug and lovey dovey kissable face 💘</p>
+      </div>
     </div>
 
-    <div class="footer">Tip: Works best on phones too. The “No” button is… slippery.</div>
+    <div class="footer" id="footer">Tip: Works best on phones too. The “No” button is… slippery.</div>
   </main>
 
   <script>
-    // --- cute floating hearts background ---
+    // Floating hearts background
     const hearts = document.getElementById('hearts');
     const heartChars = ["💗","💖","💘","💝","💕","💞","❤️"];
     const makeHearts = () => {
@@ -230,6 +280,12 @@
     const yesBtn = document.getElementById('yes');
     const success = document.getElementById('success');
     const sparkle = document.getElementById('sparkle');
+    const burst = document.getElementById('burst');
+
+    const questionTitle = document.getElementById('questionTitle');
+    const winTitle = document.getElementById('winTitle');
+    const subtitle = document.getElementById('subtitle');
+    const footer = document.getElementById('footer');
 
     function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
 
@@ -239,11 +295,9 @@
       const w = btnRect.width;
       const h = btnRect.height;
 
-      // Convert client coords -> arena-local coords
       let x = clientX - rect.left;
       let y = clientY - rect.top;
 
-      // Keep within arena
       x = clamp(x, w/2 + 4, rect.width  - w/2 - 4);
       y = clamp(y, h/2 + 4, rect.height - h/2 - 4);
 
@@ -255,7 +309,6 @@
       if (immediate) requestAnimationFrame(()=> noBtn.style.transition = "transform .12s ease");
     }
 
-    // Initial placement
     function placeNoInitial(){
       const rect = arena.getBoundingClientRect();
       const x = rect.left + rect.width * 0.68;
@@ -263,7 +316,7 @@
       moveNoTo(x, y, true);
     }
 
-    // --- TELEPORT MODE ---
+    // TELEPORT MODE
     function teleportNo(){
       const rect = arena.getBoundingClientRect();
       const btnRect = noBtn.getBoundingClientRect();
@@ -276,7 +329,6 @@
       moveNoTo(x, y);
     }
 
-    // Teleport when pointer gets close (mouse)
     function handlePointerMove(e){
       const pX = e.clientX, pY = e.clientY;
       const b = noBtn.getBoundingClientRect();
@@ -288,26 +340,29 @@
     }
     arena.addEventListener('mousemove', handlePointerMove);
 
-    // Teleport on tap/click attempts
-    noBtn.addEventListener('click', (e)=>{
-      teleportNo();
-      e.preventDefault();
-    });
+    noBtn.addEventListener('click', (e)=>{ teleportNo(); e.preventDefault(); });
+    noBtn.addEventListener('touchstart', (e)=>{ teleportNo(); e.preventDefault(); }, {passive:false});
 
-    noBtn.addEventListener('touchstart', (e)=>{
-      teleportNo();
-      e.preventDefault();
-    }, {passive:false});
+    function heartBurst(){
+      burst.innerHTML = "";
+      const emojis = ["💖","💘","💕","💞","💝","💗","❤️"];
+      const n = 16;
+      for (let i=0;i<n;i++){
+        const s = document.createElement("span");
+        s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
 
-    // YES action
-    yesBtn.addEventListener('click', ()=>{
-      success.style.display = "block";
-      yesBtn.disabled = true;
-      noBtn.style.display = "none";
-      party();
-    });
+        const angle = (Math.PI * 2) * (i / n);
+        const radius = 90 + Math.random()*40;
+        const dx = Math.cos(angle) * radius + (Math.random()*14 - 7);
+        const dy = Math.sin(angle) * radius + (Math.random()*14 - 7);
 
-    // confetti burst
+        s.style.setProperty("--dx", dx + "px");
+        s.style.setProperty("--dy", dy + "px");
+        s.style.animationDelay = (Math.random()*80) + "ms";
+        burst.appendChild(s);
+      }
+    }
+
     function party(){
       sparkle.innerHTML = "";
       const n = 90;
@@ -333,6 +388,27 @@
       }
       setTimeout(()=> sparkle.innerHTML="", 1400);
     }
+
+    // YES action
+    yesBtn.addEventListener('click', ()=>{
+      // Replace the big title
+      questionTitle.style.display = "none";
+      winTitle.style.display = "block";
+
+      // Remove the Yes button + No button row completely
+      arena.style.display = "none";
+
+      // Hide extra text/tip (optional but matches your request vibe)
+      subtitle.style.display = "none";
+      footer.style.display = "none";
+
+      // Show invite box
+      success.style.display = "block";
+      requestAnimationFrame(()=> success.classList.add("show"));
+
+      heartBurst();
+      party();
+    });
 
     placeNoInitial();
   </script>
