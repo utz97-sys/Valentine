@@ -26,8 +26,8 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:40px 18px;
-    overflow:hidden;
+    padding:28px 16px;
+    overflow:auto; /* ✅ allow scrolling (mobile too) */
   }
 
   /* Floating hearts */
@@ -43,16 +43,33 @@
     to{ transform: translateY(-120vh) rotate(360deg); opacity:0; }
   }
 
-  /* Card keeps breathing room even after elements hide */
+  /* Confetti layer */
+  .sparkle{ position:fixed; inset:0; pointer-events:none; overflow:hidden; }
+  .confetti{
+    position:absolute;
+    width:10px; height:14px;
+    border-radius:3px;
+    opacity:.95;
+    animation: pop 1.2s ease-out forwards;
+  }
+  @keyframes pop{
+    from{ transform: translate(var(--x0), var(--y0)) rotate(0deg); }
+    to{ transform: translate(var(--x1), var(--y1)) rotate(520deg); opacity:0; }
+  }
+
+  /* Card: scrollable if content is tall */
   .card{
     width:min(820px, 96vw);
-    min-height: 520px; /* extra room so it never feels tight */
+    max-height: calc(100vh - 80px);
+    overflow:auto;
+    -webkit-overflow-scrolling: touch;
+
     background:var(--card);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255,255,255,.55);
     border-radius: 30px;
     box-shadow: var(--shadow);
-    padding: 34px 34px 42px;
+    padding: 30px 26px 34px;
     text-align:center;
 
     display:flex;
@@ -74,33 +91,25 @@
     margin: 0 auto;
   }
 
-  /* Personal portrait banner (reveals after Yes) */
+  /* Image banner (visible on load, but capped so no scrolling needed) */
   .photoBanner{
     width: min(520px, 92%);
-    aspect-ratio: 3 / 4;         /* portrait-friendly */
+    aspect-ratio: 3 / 4;
     object-fit: cover;
-    object-position: center top; /* keeps faces */
+    object-position: center top;
     border-radius: 26px;
-    margin: 14px auto 10px;
+    margin: 10px auto 6px;
     box-shadow: 0 18px 44px rgba(0,0,0,.18);
     border: 1px solid rgba(255,255,255,.6);
-
-    max-height: 240px;
-    height: 580px;
     display:block;
 
-%    opacity: 0;
-%    transform: translateY(6px);
-%    transition: opacity .5s ease, transform .5s ease;
-  }
-  body.yes-mode .photoBanner{
-    opacity: 1;
-    transform: translateY(0);
+    /* ✅ prevents image from dominating the card */
+    max-height: clamp(180px, 28vh, 240px);
   }
 
   h1{
     margin: 0;
-    font-size: clamp(30px, 4.3vw, 52px);
+    font-size: clamp(28px, 4.2vw, 50px);
     letter-spacing: -0.02em;
     line-height: 1.15;
   }
@@ -118,16 +127,16 @@
     opacity: .85;
   }
 
-  /* Button area */
+  /* Buttons */
   .btnRow{
     display:flex;
     justify-content:center;
     align-items:center;
-    gap: 28px;
+    gap: 32px;          /* ✅ space between Yes and No */
     margin-top: 10px;
     margin-bottom: 6px;
-    position: relative;
-    height: 86px;
+    position: relative; /* needed for teleport positioning */
+    height: 90px;
   }
 
   button{
@@ -143,12 +152,11 @@
   }
   button:active{ transform: scale(.98); }
 
-  /* Pulse the Yes button before click */
+  /* Yes pulse */
   @keyframes yesPulse {
     0%, 100% { transform: scale(1); box-shadow: 0 12px 26px rgba(0,0,0,.14); }
     50% { transform: scale(1.04); box-shadow: 0 16px 34px rgba(255,77,109,.35); }
   }
-
   #yes{
     background: linear-gradient(135deg, var(--accent), #ff8fab);
     color: #fff;
@@ -157,22 +165,19 @@
   #yes:hover{ filter: brightness(1.03); transform: translateY(-1px); }
   body.yes-mode #yes{ animation:none; }
 
-  /* No button teleports */
+  /* No starts normal on load */
   #no{
     background: rgba(255,255,255,.92);
     color:#111827;
     border: 1px solid rgba(0,0,0,.08);
-    position:absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-60%,-50%);
+    position: static; /* ✅ fixed location at load */
   }
 
   /* Success panel */
   .success{
     display:none;
     width: min(720px, 92%);
-    margin: 22px auto 0;
+    margin: 18px auto 0;
     padding: 22px 22px;
     border-radius: 22px;
     background: rgba(124,58,237,.08);
@@ -225,34 +230,19 @@
   }
   .successContent{ position:relative; z-index:1; }
 
-  /* Confetti */
-  .sparkle{ position:fixed; inset:0; pointer-events:none; overflow:hidden; }
-  .confetti{
-    position:absolute;
-    width:10px; height:14px;
-    border-radius:3px;
-    opacity:.95;
-    animation: pop 1.2s ease-out forwards;
-  }
-  @keyframes pop{
-    from{ transform: translate(var(--x0), var(--y0)) rotate(0deg); }
-    to{ transform: translate(var(--x1), var(--y1)) rotate(520deg); opacity:0; }
-  }
-
   .footer{
     margin-top: 6px;
     font-size: 13px;
     opacity: .6;
   }
 
-  /* After-Yes glow + spacing */
+  /* After-Yes glow */
   body.yes-mode #winTitle{
     display:block;
     text-shadow:
       0 0 10px rgba(255,77,109,.28),
       0 0 26px rgba(124,58,237,.18);
   }
-  body.yes-mode .success{ margin-top: 26px; }
 </style>
 </head>
 
@@ -263,11 +253,11 @@
   <main class="card">
     <div class="badge">💌 A very serious question (for science)</div>
 
-    <!-- Portrait banner (hidden until Yes) -->
-    <img id="photoBanner" class="photoBanner" src="Couples.jpg" alt="Us 💖">
+    <!-- ✅ Upload your new image as couple.jpg -->
+    <img class="photoBanner" src="couple.jpg" alt="Us 💖">
 
     <h1 id="questionTitle">Will you be my Valentine, Rasika? 💘</h1>
-    <h1 id="winTitle" style="display:none;">YAYYYYY 💖✨ Valentine acquired. Now come here. 🫶</h1>
+    <h1 id="winTitle">YAYYYYY 💖✨ Valentine acquired. Now come here. 🫶</h1>
 
     <p class="sub" id="subtitle">
       I promise snacks, cozy vibes, and an unreasonable amount of affection.
@@ -289,7 +279,7 @@
       </div>
     </div>
 
-    <div class="footer" id="footer">Tip: Works best on phones too. The “No” button is… slippery.</div>
+    <div class="footer" id="footer">Tip: The “No” button behaves… until it gets suspicious.</div>
   </main>
 
 <script>
@@ -324,59 +314,60 @@
   const winTitle = document.getElementById('winTitle');
   const subtitle = document.getElementById('subtitle');
   const footer = document.getElementById('footer');
-  const photoBanner = document.getElementById('photoBanner');
 
-  function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+  // ✅ No is calm until the first interaction
+  let noIsActive = false;
 
-  function moveNoTo(clientX, clientY, immediate=false){
+  function activateNoTeleport(){
+    if(noIsActive) return;
+    noIsActive = true;
+
+    // convert current position to absolute so it won't "jump"
     const rect = arena.getBoundingClientRect();
     const btnRect = noBtn.getBoundingClientRect();
-    const w = btnRect.width;
-    const h = btnRect.height;
 
-    let x = clientX - rect.left;
-    let y = clientY - rect.top;
-
-    x = clamp(x, w/2 + 10, rect.width  - w/2 - 10);
-    y = clamp(y, h/2 + 10, rect.height - h/2 - 10);
-
-    if (immediate) noBtn.style.transition = "none";
-    else noBtn.style.transition = "transform .12s ease";
-    noBtn.style.left = x + "px";
-    noBtn.style.top  = y + "px";
-    noBtn.style.transform = "translate(-50%, -50%)";
-    if (immediate) requestAnimationFrame(()=> noBtn.style.transition = "transform .12s ease");
-  }
-
-  function placeNoInitial(){
-    const rect = arena.getBoundingClientRect();
-    const x = rect.left + rect.width * 0.62;
-    const y = rect.top + rect.height * 0.50;
-    moveNoTo(x, y, true);
+    noBtn.style.position = "absolute";
+    noBtn.style.left = (btnRect.left - rect.left) + "px";
+    noBtn.style.top  = (btnRect.top  - rect.top ) + "px";
   }
 
   function teleportNo(){
+    if(!noIsActive) return;
+
     const rect = arena.getBoundingClientRect();
     const btnRect = noBtn.getBoundingClientRect();
-    const w = btnRect.width;
-    const h = btnRect.height;
 
-    const x = rect.left + (w/2 + 10) + Math.random() * (rect.width  - w - 20);
-    const y = rect.top  + (h/2 + 10) + Math.random() * (rect.height - h - 20);
+    const maxX = rect.width  - btnRect.width  - 8;
+    const maxY = rect.height - btnRect.height - 8;
 
-    moveNoTo(x, y);
+    const x = Math.random() * Math.max(0, maxX);
+    const y = Math.random() * Math.max(0, maxY);
+
+    noBtn.style.left = x + "px";
+    noBtn.style.top  = y + "px";
   }
 
-  function handlePointerMove(e){
-    const b = noBtn.getBoundingClientRect();
-    const bx = b.left + b.width/2;
-    const by = b.top  + b.height/2;
-    const dist = Math.hypot(bx - e.clientX, by - e.clientY);
-    if (dist < 140) teleportNo();
-  }
-  arena.addEventListener('mousemove', handlePointerMove);
-  noBtn.addEventListener('click', (e)=>{ teleportNo(); e.preventDefault(); });
-  noBtn.addEventListener('touchstart', (e)=>{ teleportNo(); e.preventDefault(); }, {passive:false});
+  // First mouse movement anywhere activates "slippery mode"
+  document.addEventListener("mousemove", activateNoTeleport, { once:true });
+
+  // If the pointer gets near No, it escapes (after activation)
+  noBtn.addEventListener("mouseenter", ()=>{
+    activateNoTeleport();
+    teleportNo();
+  });
+
+  // Mobile touch/click makes it escape
+  noBtn.addEventListener("touchstart", (e)=>{
+    activateNoTeleport();
+    teleportNo();
+    e.preventDefault();
+  }, {passive:false});
+
+  noBtn.addEventListener("click", (e)=>{
+    activateNoTeleport();
+    teleportNo();
+    e.preventDefault();
+  });
 
   function heartBurst(){
     burst.innerHTML = "";
@@ -426,11 +417,6 @@
     questionTitle.style.display = "none";
     winTitle.style.display = "block";
 
-    // Reveal the personal portrait banner
-    photoBanner.style.display = "block";
-    // allow fade animation to run (transition needs a tick)
-    requestAnimationFrame(()=> photoBanner.style.opacity = "1");
-
     // Remove buttons + extra lines
     arena.style.display = "none";
     subtitle.style.display = "none";
@@ -443,8 +429,6 @@
     heartBurst();
     party();
   });
-
-  placeNoInitial();
 </script>
 </body>
 </html>
