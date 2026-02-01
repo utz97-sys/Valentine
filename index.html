@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Will you be my Valentine? 💘</title>
+  <style>
+    :root{
+      --bg1:#ffdde1;
+      --bg2:#ee9ca7;
+      --card:#ffffffcc;
+      --text:#1f2937;
+      --accent:#ff4d6d;
+      --accent2:#7c3aed;
+      --shadow: 0 20px 60px rgba(0,0,0,.18);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color:var(--text);
+      background: radial-gradient(circle at 20% 20%, #fff 0%, var(--bg1) 35%, var(--bg2) 100%);
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+    .hearts{
+      position:fixed; inset:0;
+      pointer-events:none;
+      opacity:.18;
+      filter: blur(.2px);
+    }
+    .heart{
+      position:absolute;
+      font-size: clamp(16px, 2vw, 26px);
+      animation: floatUp linear infinite;
+    }
+    @keyframes floatUp{
+      from{ transform: translateY(20vh) rotate(0deg); opacity:0; }
+      10%{ opacity:.8; }
+      to{ transform: translateY(-120vh) rotate(360deg); opacity:0; }
+    }
+
+    .card{
+      width:min(720px, 92vw);
+      background:var(--card);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,.55);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 28px 26px 34px;
+      text-align:center;
+      position:relative;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:.5rem;
+      padding:8px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.75);
+      border:1px solid rgba(0,0,0,.06);
+      font-weight:600;
+      font-size:14px;
+      margin-bottom:14px;
+    }
+    h1{
+      margin: 6px 0 8px;
+      font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: -0.02em;
+    }
+    .sub{
+      margin: 0 auto 22px;
+      max-width: 52ch;
+      font-size: clamp(15px, 2.2vw, 18px);
+      line-height:1.45;
+      opacity:.85;
+    }
+    .btnRow{
+      position:relative;
+      height: 90px;
+      margin-top: 18px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:18px;
+      flex-wrap:wrap;
+    }
+    button{
+      appearance:none;
+      border:0;
+      border-radius: 999px;
+      padding: 14px 22px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor:pointer;
+      user-select:none;
+      box-shadow: 0 12px 26px rgba(0,0,0,.14);
+      transform: translateZ(0);
+      transition: transform .12s ease, filter .12s ease;
+    }
+    button:active{ transform: scale(.98); }
+    #yes{
+      background: linear-gradient(135deg, var(--accent), #ff8fab);
+      color:white;
+    }
+    #yes:hover{ filter: brightness(1.03); transform: translateY(-1px); }
+    #no{
+      background: rgba(255,255,255,.9);
+      color:#111827;
+      border: 1px solid rgba(0,0,0,.08);
+      position:absolute; /* so it can move freely */
+      left: 56%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .footer{
+      margin-top: 18px;
+      font-size: 13px;
+      opacity:.65;
+    }
+    .success{
+      display:none;
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(124,58,237,.08);
+      border: 1px solid rgba(124,58,237,.18);
+      font-weight:700;
+    }
+    .sparkle{
+      position:fixed;
+      pointer-events:none;
+      inset:0;
+      overflow:hidden;
+    }
+    .confetti{
+      position:absolute;
+      width:10px; height:14px;
+      border-radius:3px;
+      opacity:.95;
+      animation: pop 1.2s ease-out forwards;
+    }
+    @keyframes pop{
+      from{ transform: translate(var(--x0), var(--y0)) rotate(0deg); }
+      to{ transform: translate(var(--x1), var(--y1)) rotate(520deg); opacity:0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hearts" aria-hidden="true" id="hearts"></div>
+  <div class="sparkle" aria-hidden="true" id="sparkle"></div>
+
+  <main class="card" id="card">
+    <div class="badge">💌 A very serious question (for science)</div>
+    <h1>Will you be my Valentine, Rasika? 💘</h1>
+    <p class="sub">
+      I promise snacks, cozy vibes, and an unreasonable amount of affection.
+      One button leads to happiness. The other… is shy.
+    </p>
+
+    <div class="btnRow" id="arena">
+      <button id="yes">Yes! 🥰</button>
+      <button id="no" aria-label="No">No 🙃</button>
+    </div>
+
+    <div class="success" id="success">
+      YAYYYYY 💖✨ Valentine acquired. Now come here. 🫶
+    </div>
+
+    <div class="footer">Tip: Works best on phones too. The “No” button is… slippery.</div>
+  </main>
+
+  <script>
+    // --- cute floating hearts background ---
+    const hearts = document.getElementById('hearts');
+    const heartChars = ["💗","💖","💘","💝","💕","💞","❤️"];
+    const makeHearts = () => {
+      hearts.innerHTML = "";
+      const count = 26;
+      for (let i=0;i<count;i++){
+        const s = document.createElement('div');
+        s.className = "heart";
+        s.textContent = heartChars[Math.floor(Math.random()*heartChars.length)];
+        s.style.left = Math.random()*100 + "vw";
+        s.style.top = (60 + Math.random()*60) + "vh";
+        s.style.animationDuration = (6 + Math.random()*8) + "s";
+        s.style.animationDelay = (-Math.random()*10) + "s";
+        hearts.appendChild(s);
+      }
+    };
+    makeHearts();
+    window.addEventListener('resize', makeHearts);
+
+    const arena = document.getElementById('arena');
+    const noBtn = document.getElementById('no');
+    const yesBtn = document.getElementById('yes');
+    const success = document.getElementById('success');
+    const sparkle = document.getElementById('sparkle');
+
+    // Place the "No" button initially so it doesn't overlap on small screens
+    function placeNoInitial(){
+      const rect = arena.getBoundingClientRect();
+      const x = rect.left + rect.width * 0.68;
+      const y = rect.top + rect.height * 0.50;
+      moveNoTo(x, y, true);
+    }
+
+    function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+
+    function moveNoTo(clientX, clientY, immediate=false){
+      const rect = arena.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+      const w = btnRect.width;
+      const h = btnRect.height;
+
+      // Convert client coords -> arena-local coords
+      let x = clientX - rect.left;
+      let y = clientY - rect.top;
+
+      // Keep within arena
+      x = clamp(x, w/2 + 4, rect.width  - w/2 - 4);
+      y = clamp(y, h/2 + 4, rect.height - h/2 - 4);
+
+      // Apply
+      if (immediate) noBtn.style.transition = "none";
+      else noBtn.style.transition = "transform .12s ease";
+      noBtn.style.left = x + "px";
+      noBtn.style.top  = y + "px";
+      noBtn.style.transform = "translate(-50%, -50%)";
+      if (immediate) requestAnimationFrame(()=> noBtn.style.transition = "transform .12s ease");
+    }
+
+    function dodge(pointerX, pointerY){
+      const rect = arena.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+      const bx = btnRect.left + btnRect.width/2;
+      const by = btnRect.top  + btnRect.height/2;
+
+      // Vector away from pointer
+      let dx = bx - pointerX;
+      let dy = by - pointerY;
+
+      const dist = Math.hypot(dx, dy) || 1;
+      dx /= dist; dy /= dist;
+
+      // Jump distance scales with closeness (spicier near the cursor)
+      const close = clamp(1 - (dist / 220), 0, 1);
+      const jump = 90 + close * 130;
+
+      // New target in client coords
+      const tx = bx + dx * jump + (Math.random()*40 - 20);
+      const ty = by + dy * jump + (Math.random()*26 - 13);
+
+      moveNoTo(tx, ty);
+    }
+
+    // Trigger dodge when the pointer gets too close or tries to tap it
+    function handlePointerMove(e){
+      const pX = e.clientX, pY = e.clientY;
+      const b = noBtn.getBoundingClientRect();
+      const bx = b.left + b.width/2;
+      const by = b.top  + b.height/2;
+      const dist = Math.hypot(bx - pX, by - pY);
+
+      if (dist < 120) dodge(pX, pY);
+    }
+
+    // For mouse
+    arena.addEventListener('mousemove', handlePointerMove);
+
+    // For touch: when they try to tap "No", it runs away
+    noBtn.addEventListener('touchstart', (e)=>{
+      const t = e.touches[0];
+      dodge(t.clientX, t.clientY);
+      e.preventDefault();
+    }, {passive:false});
+
+    // Also block clicking "No" (just in case)
+    noBtn.addEventListener('click', (e)=>{
+      dodge(e.clientX, e.clientY);
+      e.preventDefault();
+    });
+
+    // YES action
+    yesBtn.addEventListener('click', ()=>{
+      success.style.display = "block";
+      yesBtn.disabled = true;
+      noBtn.style.display = "none";
+      party();
+    });
+
+    // confetti-ish burst
+    function party(){
+      sparkle.innerHTML = "";
+      const n = 90;
+      const { innerWidth: W, innerHeight: H } = window;
+      for(let i=0;i<n;i++){
+        const d = document.createElement('div');
+        d.className = "confetti";
+        // random colors without hardcoding palette: use HSL hue
+        const hue = Math.floor(Math.random()*360);
+        d.style.background = `hsl(${hue} 90% 60%)`;
+
+        const x0 = (W/2) + (Math.random()*40 - 20);
+        const y0 = (H/2) + (Math.random()*40 - 20);
+        const x1 = x0 + (Math.random()*900 - 450);
+        const y1 = y0 + (Math.random()*700 - 350);
+
+        d.style.setProperty("--x0", x0 + "px");
+        d.style.setProperty("--y0", y0 + "px");
+        d.style.setProperty("--x1", x1 + "px");
+        d.style.setProperty("--y1", y1 + "px");
+        d.style.left = "0px";
+        d.style.top  = "0px";
+        sparkle.appendChild(d);
+      }
+      setTimeout(()=> sparkle.innerHTML="", 1400);
+    }
+
+    placeNoInitial();
+  </script>
+</body>
+</html>
