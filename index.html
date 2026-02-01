@@ -7,9 +7,9 @@
 
 <style>
   :root{
-    --bg1:#ffdde1;
-    --bg2:#ee9ca7;
-    --card: rgba(255,255,255,.88);
+    --bg1:#ffe4e9;
+    --bg2:#f7b7c3;
+    --card: rgba(255,255,255,.92);
     --text:#1f2937;
     --accent:#ff4d6d;
     --accent2:#7c3aed;
@@ -22,29 +22,15 @@
     min-height:100vh;
     font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     color:var(--text);
-
-    /* ✅ Background image is hidden until yes-mode sets --bgimg */
-    background:
-      linear-gradient(rgba(255,221,225,.82), rgba(238,156,167,.82)),
-      var(--bgimg, none);
-    background-size: contain;      /* ✅ shows whole image (no crop) */
-    background-repeat: no-repeat;
-    background-position: center;
-    background-attachment: fixed;
-
+    background: linear-gradient(180deg, var(--bg1), var(--bg2));
     display:flex;
     align-items:center;
     justify-content:center;
     padding:28px 16px;
-    overflow:auto;                /* ✅ allow scroll on mobile */
+    overflow:auto;
   }
 
-  /* ✅ reveal the background image after YES */
-  body.yes-mode{
-    --bgimg: url("Couples.jpg");
-  }
-
-  /* Floating hearts */
+  /* Floating hearts background */
   .hearts{ position:fixed; inset:0; pointer-events:none; opacity:.18; }
   .heart{
     position:absolute;
@@ -71,24 +57,18 @@
     to{ transform: translate(var(--x1), var(--y1)) rotate(520deg); opacity:0; }
   }
 
-  /* Card: readable over background */
+  /* ✅ Vertical card layout */
   .card{
-    width:min(820px, 96vw);
-    max-height: calc(100vh - 80px);
-    overflow:auto;
-    -webkit-overflow-scrolling: touch;
-
+    width: min(520px, 96vw);
     background: var(--card);
     backdrop-filter: blur(14px);
     border: 1px solid rgba(255,255,255,.65);
-    border-radius: 30px;
+    border-radius: 34px;
     box-shadow: var(--shadow);
-    padding: 30px 26px 34px;
+    padding: 28px 24px 34px;
     text-align:center;
-
     display:flex;
     flex-direction:column;
-    justify-content:center;
     gap: 14px;
   }
 
@@ -105,9 +85,21 @@
     margin: 0 auto;
   }
 
+  /* ✅ Image inside card (no crop) */
+  .posterImage{
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+    margin: 12px auto 10px;
+    display: none; /* ✅ hidden until YES */
+    border-radius: 22px;
+    box-shadow: 0 20px 50px rgba(0,0,0,.25);
+    border: 1px solid rgba(255,255,255,.6);
+  }
+
   h1{
     margin: 0;
-    font-size: clamp(28px, 4.2vw, 50px);
+    font-size: clamp(28px, 5vw, 46px);
     letter-spacing: -0.02em;
     line-height: 1.15;
   }
@@ -117,9 +109,17 @@
     font-weight: 950;
   }
 
+  /* ✅ Glow after YES */
+  body.yes-mode #winTitle{
+    display:block;
+    text-shadow:
+      0 0 10px rgba(255,77,109,.28),
+      0 0 26px rgba(124,58,237,.18);
+  }
+
   .sub{
     margin: 0 auto;
-    max-width: 60ch;
+    max-width: 58ch;
     font-size: clamp(15px, 2.2vw, 18px);
     line-height: 1.55;
     opacity: .85;
@@ -130,10 +130,10 @@
     display:flex;
     justify-content:center;
     align-items:center;
-    gap: 32px;          /* ✅ real spacing between buttons */
+    gap: 32px;
     margin-top: 10px;
-    margin-bottom: 6px;
-    position: relative; /* needed for teleport */
+    margin-bottom: 2px;
+    position: relative;
     height: 92px;
   }
 
@@ -147,6 +147,7 @@
     box-shadow:0 12px 26px rgba(0,0,0,.14);
     transition: transform .12s ease, filter .12s ease;
     user-select:none;
+    -webkit-tap-highlight-color: transparent;
   }
   button:active{ transform: scale(.98); }
 
@@ -168,15 +169,15 @@
     background: rgba(255,255,255,.92);
     color:#111827;
     border: 1px solid rgba(0,0,0,.08);
-    position: static; /* ✅ fixed location at load */
+    position: static;
   }
 
   /* Success panel */
   .success{
     display:none;
-    width: min(720px, 92%);
-    margin: 18px auto 0;
-    padding: 22px 22px;
+    width: 100%;
+    margin: 14px auto 0;
+    padding: 18px 18px;
     border-radius: 22px;
     background: rgba(124,58,237,.08);
     border: 1px solid rgba(124,58,237,.20);
@@ -192,7 +193,7 @@
   }
 
   .inviteLine{
-    font-size: clamp(16px, 2.25vw, 20px);
+    font-size: clamp(16px, 2.4vw, 20px);
     font-weight: 900;
     color: var(--accent2);
     line-height: 1.35;
@@ -213,7 +214,7 @@
     margin: 14px auto 0;
     padding: 10px 14px;
     border-radius: 999px;
-    background: rgba(255,255,255,.85);
+    background: rgba(255,255,255,.88);
     border: 1px solid rgba(0,0,0,.08);
     text-decoration: none;
     color: #111827;
@@ -252,14 +253,6 @@
     font-size: 13px;
     opacity: .6;
   }
-
-  /* After-Yes glow */
-  body.yes-mode #winTitle{
-    display:block;
-    text-shadow:
-      0 0 10px rgba(255,77,109,.28),
-      0 0 26px rgba(124,58,237,.18);
-  }
 </style>
 </head>
 
@@ -269,6 +262,9 @@
 
   <main class="card">
     <div class="badge">💌 A very serious question (for science)</div>
+
+    <!-- ✅ Image inside card, revealed after YES -->
+    <img id="posterImage" class="posterImage" src="couple.jpg" alt="Us 💖">
 
     <h1 id="questionTitle">Will you be my Valentine, Rasika? 💘</h1>
     <h1 id="winTitle">YAYYYYY 💖✨ Valentine acquired. Now come here. 🫶</h1>
@@ -291,8 +287,8 @@
         </div>
         <p>Bring in your warm hug and lovey dovey kissable face 💘</p>
 
-        <!-- ✅ “Save our picture” link -->
-        <a class="saveLink" href="Couples.jpg" target="_blank" rel="noopener">
+        <!-- ✅ Save/open image (works on iPhone: opens image tab → long-press save) -->
+        <a class="saveLink" href="couple.jpg?v=2" target="_blank" rel="noopener">
           💾 Open & Save our picture
         </a>
       </div>
@@ -328,6 +324,7 @@
   const success = document.getElementById('success');
   const sparkle = document.getElementById('sparkle');
   const burst = document.getElementById('burst');
+  const posterImage = document.getElementById('posterImage');
 
   const questionTitle = document.getElementById('questionTitle');
   const winTitle = document.getElementById('winTitle');
@@ -437,7 +434,10 @@
   }
 
   yesBtn.addEventListener('click', ()=>{
-    document.body.classList.add("yes-mode"); // ✅ reveals background image
+    document.body.classList.add("yes-mode");
+
+    // ✅ reveal image
+    posterImage.style.display = "block";
 
     questionTitle.style.display = "none";
     winTitle.style.display = "block";
