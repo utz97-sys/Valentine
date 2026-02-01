@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Will you be my Valentine? 💘</title>
+<title>Valentine 💘</title>
 
 <style>
   :root{
@@ -13,357 +13,474 @@
     --text:#1f2937;
     --accent:#ff4d6d;
     --accent2:#7c3aed;
-    --shadow:0 20px 60px rgba(0,0,0,.18);
+    --shadow:0 18px 50px rgba(0,0,0,.18);
   }
   *{box-sizing:border-box}
 
   body{
     margin:0;
     min-height:100vh;
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
     color:var(--text);
-    background: linear-gradient(180deg, var(--bg1), var(--bg2));
+    background: linear-gradient(180deg,var(--bg1),var(--bg2));
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:28px 16px;
-    overflow:auto;
+    padding:16px;
+    overflow:hidden; /* we keep everything on one screen by design */
   }
 
-  /* Floating hearts background */
-  .hearts{ position:fixed; inset:0; pointer-events:none; opacity:.18; }
-  .heart{
-    position:absolute;
-    font-size: clamp(16px, 2vw, 26px);
-    animation: floatUp linear infinite;
-  }
-  @keyframes floatUp{
-    from{ transform: translateY(20vh) rotate(0deg); opacity:0; }
-    10%{ opacity:.8; }
-    to{ transform: translateY(-120vh) rotate(360deg); opacity:0; }
-  }
-
-  /* Confetti layer */
-  .sparkle{ position:fixed; inset:0; pointer-events:none; overflow:hidden; }
-  .confetti{
-    position:absolute;
-    width:10px; height:14px;
-    border-radius:3px;
-    opacity:.95;
-    animation: pop 1.2s ease-out forwards;
-  }
-  @keyframes pop{
-    from{ transform: translate(var(--x0), var(--y0)) rotate(0deg); }
-    to{ transform: translate(var(--x1), var(--y1)) rotate(520deg); opacity:0; }
-  }
-
-  /* Card */
+  /* card */
   .card{
-    width: min(560px, 96vw);
-    background: var(--card);
-    backdrop-filter: blur(14px);
-    border: 1px solid rgba(255,255,255,.7);
-    border-radius: 34px;
-    box-shadow: var(--shadow);
-    padding: 28px 24px 34px;
+    width:min(560px,96vw);
+    background:var(--card);
+    border-radius:32px;
+    padding:22px 22px 26px;
     text-align:center;
+    box-shadow:var(--shadow);
     display:flex;
     flex-direction:column;
-    gap: 14px;
-  }
-
-  .badge{
-    display:inline-flex;
-    align-items:center;
-    gap:.5rem;
-    padding:8px 16px;
-    border-radius:999px;
-    background:rgba(255,255,255,.82);
-    border:1px solid rgba(0,0,0,.06);
-    font-weight:600;
-    font-size:14px;
-    margin: 0 auto;
-  }
-
-  h1{
-    margin: 0;
-    font-size: clamp(28px, 5vw, 46px);
-    letter-spacing: -0.02em;
-    line-height: 1.15;
-  }
-
-  #winTitle{
-    display:none;
-    font-weight: 950;
-  }
-
-  /* Glow after YES */
-  body.yes-mode #winTitle{
-    display:block;
-    text-shadow:
-      0 0 10px rgba(255,77,109,.30),
-      0 0 28px rgba(124,58,237,.18);
-  }
-
-  .sub{
-    margin: 0 auto;
-    max-width: 60ch;
-    font-size: clamp(15px, 2.2vw, 18px);
-    line-height: 1.55;
-    opacity: .85;
-  }
-
-  /* Buttons */
-  .btnRow{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap: 32px;
-    margin-top: 10px;
-    margin-bottom: 2px;
-    position: relative;
-    height: 92px;
-  }
-
-  button{
-    border:0;
-    border-radius:999px;
-    padding: 14px 26px;
-    font-size: 18px;
-    font-weight: 750;
-    cursor:pointer;
-    box-shadow:0 12px 26px rgba(0,0,0,.14);
-    transition: transform .12s ease, filter .12s ease;
-    user-select:none;
-    -webkit-tap-highlight-color: transparent;
-  }
-  button:active{ transform: scale(.98); }
-
-  /* Yes pulse */
-  @keyframes yesPulse {
-    0%, 100% { transform: scale(1); box-shadow: 0 12px 26px rgba(0,0,0,.14); }
-    50% { transform: scale(1.04); box-shadow: 0 16px 34px rgba(255,77,109,.35); }
-  }
-  #yes{
-    background: linear-gradient(135deg, var(--accent), #ff8fab);
-    color: #fff;
-    animation: yesPulse 1.3s ease-in-out infinite;
-  }
-  #yes:hover{ filter: brightness(1.03); transform: translateY(-1px); }
-  body.yes-mode #yes{ animation:none; }
-
-  /* No starts normal on load */
-  #no{
-    background: rgba(255,255,255,.94);
-    color:#111827;
-    border: 1px solid rgba(0,0,0,.08);
-    position: static;
-  }
-
-  /* ✅ Click-to-open photo (hidden until YES) */
-  .photoWrap{
-    display:none;
-    margin: 14px auto 14px; /* ✅ space before & after */
-    width: min(440px, 92%);
-    border-radius: 22px;
-    overflow: hidden;
-    border: 2px solid rgba(255,255,255,.9);
-    box-shadow: 0 18px 44px rgba(0,0,0,.22);
-    background: #fff;
-  }
-  .photoWrap:active{ transform: scale(.995); }
-
-  .photoWrap img{
-    display:block;
-    width:100%;
-    height:auto;
-  }
-
-  .photoHint{
-    display:none;
-    font-size: 13px;
-    opacity: .68;
-    margin-top: -6px;
-  }
-
-  /* Success panel */
-  .success{
-    display:none;
-    width: 100%;
-    margin: 8px auto 0;
-    padding: 18px 18px;
-    border-radius: 22px;
-    background: rgba(124,58,237,.08);
-    border: 1px solid rgba(124,58,237,.20);
-    opacity:0;
-    transform: translateY(10px);
-    transition: opacity .35s ease, transform .35s ease;
+    gap:12px;
     position:relative;
     overflow:hidden;
   }
-  .success.show{
-    opacity:1;
-    transform: translateY(0);
+
+  .badge{
+    margin:0 auto;
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:14px;
+    font-weight:600;
+    background:rgba(255,255,255,.85);
+    border:1px solid rgba(0,0,0,.06);
   }
 
+  h1{
+    margin:0;
+    font-size:clamp(24px,4.8vw,42px);
+    line-height:1.15;
+    letter-spacing:-0.02em;
+  }
+
+  .sub{
+    margin:0 auto;
+    max-width:60ch;
+    font-size:clamp(14px,2vw,16px);
+    opacity:.85;
+    line-height:1.45;
+  }
+
+  /* Yes button pulse */
+  @keyframes yesPulse{
+    0%,100%{transform:scale(1)}
+    50%{transform:scale(1.035)}
+  }
+
+  .btnRow{
+    display:flex;
+    justify-content:center;
+    gap:26px;
+    height:82px;
+    position:relative;
+    margin-top:6px;
+  }
+
+  button{
+    border:none;
+    border-radius:999px;
+    padding:13px 24px;
+    font-size:17px;
+    font-weight:750;
+    cursor:pointer;
+    box-shadow:0 10px 24px rgba(0,0,0,.15);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #yes{
+    background:linear-gradient(135deg,#ff4d6d,#ff8fab);
+    color:#fff;
+    animation:yesPulse 1.3s infinite;
+  }
+  #no{
+    background:#fff;
+    border:1px solid rgba(0,0,0,.1);
+  }
+
+  /* Heart marker next to question (launch point) */
+  .questionLine{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  #launchHeart{
+    display:inline-block;
+    transform-origin:center;
+    filter: drop-shadow(0 8px 10px rgba(0,0,0,.12));
+  }
+  .heartWiggle{
+    animation: heartWiggle .7s ease-in-out 2;
+  }
+  @keyframes heartWiggle{
+    0%,100%{transform:scale(1) rotate(0deg)}
+    25%{transform:scale(1.08) rotate(-8deg)}
+    50%{transform:scale(1.1) rotate(8deg)}
+    75%{transform:scale(1.08) rotate(-6deg)}
+  }
+
+  /* Two "pages" */
+  .page{display:none;}
+  .page.active{display:block;}
+
+  /* Invite view sizing so it fits without scroll (most screens) */
+  .inviteWrap{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    align-items:center;
+  }
+
+  #winTitle{
+    font-weight:950;
+    text-shadow:
+      0 0 10px rgba(255,77,109,.30),
+      0 0 24px rgba(124,58,237,.20);
+  }
+
+  /* Photo (click to open & save) */
+  .photoWrap{
+    margin:6px 0 10px;
+    width:min(280px,78%);
+    border-radius:18px;
+    overflow:hidden;
+    border:2px solid rgba(255,255,255,.95);
+    box-shadow:0 12px 28px rgba(0,0,0,.20);
+    background:#fff;
+  }
+  .photoWrap img{
+    width:100%;
+    height:auto;
+    display:block;
+  }
+  .photoHint{
+    font-size:12.5px;
+    opacity:.65;
+    margin-top:-2px;
+  }
+
+  /* Invite panel */
+  .success{
+    width:100%;
+    padding:14px 14px;
+    border-radius:18px;
+    background:rgba(124,58,237,.08);
+    border:1px solid rgba(124,58,237,.2);
+  }
   .inviteLine{
-    font-size: clamp(16px, 2.4vw, 20px);
-    font-weight: 900;
-    color: var(--accent2);
-    line-height: 1.35;
-    margin: 0 0 10px;
+    font-weight:900;
+    color:var(--accent2);
+    font-size:clamp(14px,2.3vw,18px);
+    line-height:1.35;
+    margin:0 0 6px;
   }
   .success p{
     margin:0;
     font-weight:800;
-    line-height:1.45;
+    line-height:1.4;
   }
 
-  /* Heart burst */
-  .burst{
+  /* --- Cutscene overlay (arrow + envelope) --- */
+  .cutscene{
+    position:absolute;
+    inset:0;
+    display:none;
+    place-items:center;
+    z-index:20;
+    pointer-events:none;
+  }
+  .cutscene.show{display:grid;}
+
+  /* Dim backdrop so animation reads */
+  .cutsceneBackdrop{
+    position:absolute;
+    inset:0;
+    background: radial-gradient(circle at 50% 30%, rgba(255,255,255,.15), rgba(0,0,0,.18));
+    opacity:0;
+    animation: fadeIn 500ms ease forwards;
+  }
+  @keyframes fadeIn{
+    to{opacity:1;}
+  }
+
+  /* Arrow flight (SVG) */
+  .arrowLayer{
+    position:absolute;
+    inset:0;
+  }
+  .arrowSvg{
+    width:100%;
+    height:100%;
+    overflow:visible;
+  }
+  #arrowGroup{
+    opacity:0;
+    transform-origin: 0 0;
+  }
+  .arrowFly #arrowGroup{
+    opacity:1;
+    animation: arrowFly 900ms cubic-bezier(.2,.8,.2,1) forwards;
+  }
+  /* starts near the heart, then zooms toward viewer */
+  @keyframes arrowFly{
+    0%{
+      transform: translate(var(--ax0), var(--ay0)) scale(.6) rotate(-12deg);
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,.15));
+    }
+    65%{
+      transform: translate(var(--ax1), var(--ay1)) scale(1.1) rotate(10deg);
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.22));
+    }
+    100%{
+      transform: translate(var(--ax2), var(--ay2)) scale(2.6) rotate(18deg);
+      opacity:0;
+      filter: drop-shadow(0 16px 26px rgba(0,0,0,.25));
+    }
+  }
+
+  /* Envelope */
+  .envelopeStage{
+    position:relative;
+    width:min(340px,78vw);
+    height:220px;
+    display:grid;
+    place-items:center;
+    transform: translateY(10px) scale(.96);
+    opacity:0;
+  }
+  .showEnvelope .envelopeStage{
+    opacity:1;
+    animation: envPop 520ms ease forwards;
+  }
+  @keyframes envPop{
+    from{transform: translateY(14px) scale(.92);}
+    to{transform: translateY(0) scale(1);}
+  }
+
+  .envelope{
+    position:relative;
+    width:100%;
+    height:200px;
+    border-radius:18px;
+    background: rgba(255,255,255,.95);
+    box-shadow: 0 22px 55px rgba(0,0,0,.22);
+    border:1px solid rgba(0,0,0,.08);
+    overflow:hidden;
+  }
+
+  /* Envelope flap */
+  .flap{
+    position:absolute;
+    left:0; right:0;
+    top:-6px;
+    height:120px;
+    background: linear-gradient(180deg, rgba(255,230,236,.95), rgba(255,255,255,.95));
+    clip-path: polygon(0 0, 100% 0, 50% 88%);
+    transform-origin: 50% 0%;
+    transform: rotateX(0deg);
+    z-index:3;
+  }
+
+  /* Envelope body */
+  .envBody{
+    position:absolute;
+    inset:0;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,240,245,.95));
+    z-index:1;
+  }
+
+  /* Seal */
+  .seal{
     position:absolute;
     left:50%;
-    top:55%;
-    transform:translate(-50%,-50%);
-    pointer-events:none;
-    z-index:0;
+    top:92px;
+    width:56px;
+    height:56px;
+    transform:translateX(-50%);
+    border-radius:50%;
+    background: radial-gradient(circle at 30% 30%, #ff9fb0, #ff4d6d);
+    box-shadow: 0 12px 22px rgba(0,0,0,.18);
+    display:grid;
+    place-items:center;
+    z-index:4;
   }
-  .burst span{
-    position:absolute;
-    font-size: 22px;
-    opacity: 0;
-    transform: translate(0,0) scale(.8);
-    animation: burst 900ms ease-out forwards;
+  .seal span{
+    font-size:22px;
     filter: drop-shadow(0 6px 10px rgba(0,0,0,.12));
   }
-  @keyframes burst{
-    0%{ opacity:0; transform: translate(0,0) scale(.8); }
-    15%{ opacity:1; }
-    100%{ opacity:0; transform: translate(var(--dx), var(--dy)) scale(1.15); }
-  }
-  .successContent{ position:relative; z-index:1; }
 
-  .footer{
-    margin-top: 6px;
-    font-size: 13px;
-    opacity: .6;
+  /* Letter card that slides up */
+  .letter{
+    position:absolute;
+    left:50%;
+    bottom:-10px;
+    width:86%;
+    height:140px;
+    transform: translateX(-50%) translateY(120px);
+    border-radius:16px;
+    background: rgba(255,255,255,.98);
+    border:1px solid rgba(0,0,0,.08);
+    box-shadow: 0 14px 32px rgba(0,0,0,.16);
+    z-index:2;
+    display:grid;
+    place-items:center;
+    padding:14px;
+    text-align:center;
+    font-weight:850;
   }
+
+  .openEnvelope .seal{
+    animation: sealPop 420ms ease forwards;
+  }
+  @keyframes sealPop{
+    0%{transform:translateX(-50%) scale(1);}
+    55%{transform:translateX(-50%) scale(1.15);}
+    100%{transform:translateX(-50%) scale(.01); opacity:0;}
+  }
+
+  .openEnvelope .flap{
+    animation: flapOpen 600ms cubic-bezier(.2,.9,.2,1) forwards;
+  }
+  @keyframes flapOpen{
+    0%{transform: rotateX(0deg);}
+    100%{transform: rotateX(72deg);}
+  }
+
+  .openEnvelope .letter{
+    animation: letterRise 720ms cubic-bezier(.2,.9,.2,1) forwards;
+  }
+  @keyframes letterRise{
+    0%{transform: translateX(-50%) translateY(120px);}
+    70%{transform: translateX(-50%) translateY(10px);}
+    100%{transform: translateX(-50%) translateY(0px);}
+  }
+
+  /* Final crossfade to invite page */
+  .fadeOutCutscene{
+    animation: fadeOut 520ms ease forwards;
+  }
+  @keyframes fadeOut{
+    to{opacity:0;}
+  }
+
 </style>
 </head>
 
 <body>
-  <div class="hearts" id="hearts" aria-hidden="true"></div>
-  <div class="sparkle" id="sparkle" aria-hidden="true"></div>
+  <main class="card" id="card">
+    <div class="badge">💌 A very serious question</div>
 
-  <main class="card">
-    <div class="badge">💌 A very serious question (for science)</div>
+    <!-- PAGE 1 -->
+    <section class="page active" id="pageQuestion">
+      <div class="questionLine">
+        <h1 id="questionTitle">Will you be my Valentine, Rasika?</h1>
+        <span id="launchHeart" aria-hidden="true">💘</span>
+      </div>
 
-    <h1 id="questionTitle">Will you be my Valentine, Rasika? 💘</h1>
-    <h1 id="winTitle">YAYYYYY 💖✨ Valentine acquired. Now come here. 🫶</h1>
+      <p class="sub" id="subtitle">
+        Snacks, cozy vibes, and unreasonable affection guaranteed.
+      </p>
 
-    <p class="sub" id="subtitle">
-      I promise snacks, cozy vibes, and an unreasonable amount of affection.
-      One button leads to happiness. The other… is shy.
-    </p>
+      <div class="btnRow" id="arena">
+        <button id="yes">Yes! 🥰</button>
+        <button id="no">No 🙃</button>
+      </div>
+    </section>
 
-    <div class="btnRow" id="arena">
-      <button id="yes">Yes! 🥰</button>
-      <button id="no" aria-label="No">No 🙃</button>
-    </div>
+    <!-- PAGE 2 -->
+    <section class="page" id="pageInvite">
+      <div class="inviteWrap">
+        <h1 id="winTitle">YAYYYYY 💖✨ Valentine acquired. Now come here. 🫶</h1>
 
-    <!-- ✅ Photo appears AFTER YES, between title and invite -->
-    <a id="photoWrap" class="photoWrap" href="couple.jpg?v=5" target="_blank" rel="noopener" aria-label="Open photo">
-      <img src="couple.jpg?v=5" alt="Us 💖">
-    </a>
-    <div id="photoHint" class="photoHint">Tip: Tap the photo to open & save it 💾</div>
+        <!-- Image BETWEEN title and invite -->
+        <a class="photoWrap" id="photoWrap" href="couple.jpg?v=12" target="_blank" rel="noopener" aria-label="Open photo to save">
+          <img src="couple.jpg?v=12" alt="Us 💖">
+        </a>
+        <div class="photoHint">Tap the photo to open & save it 💾</div>
 
-    <div class="success" id="success">
-      <div class="burst" id="burst" aria-hidden="true"></div>
-      <div class="successContent">
-        <div class="inviteLine">
-          💖 You are invited on Feb 13 to celebrate Valentines Date Night at Southern Hill Farms 💖
+        <div class="success">
+          <div class="inviteLine">
+            💖 You are invited on Feb 13 to celebrate Valentines Date Night at Southern Hill Farms 💖
+          </div>
+          <p>Bring your warm hug and lovey dovey kissable face 💘</p>
         </div>
-        <p>Bring in your warm hug and lovey dovey kissable face 💘</p>
+      </div>
+    </section>
+
+    <!-- CUTSCENE OVERLAY -->
+    <div class="cutscene" id="cutscene" aria-hidden="true">
+      <div class="cutsceneBackdrop"></div>
+
+      <div class="arrowLayer">
+        <svg class="arrowSvg" viewBox="0 0 1000 600" preserveAspectRatio="none">
+          <g id="arrowGroup">
+            <!-- simple cupid arrow -->
+            <line x1="0" y1="0" x2="220" y2="0" stroke="rgba(30,41,59,.9)" stroke-width="8" stroke-linecap="round"/>
+            <!-- arrow head -->
+            <polygon points="220,0 190,-18 190,18" fill="rgba(30,41,59,.9)"/>
+            <!-- fletching -->
+            <polygon points="0,0 -26,-18 -20,0 -26,18" fill="rgba(255,77,109,.95)"/>
+            <polygon points="-18,0 -44,-14 -38,0 -44,14" fill="rgba(255,77,109,.75)"/>
+            <!-- tiny heart charm -->
+            <text x="120" y="10" font-size="32">💘</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="envelopeStage" id="envelopeStage">
+        <div class="envelope" id="envelope">
+          <div class="envBody"></div>
+          <div class="letter">Sealed with love 💖</div>
+          <div class="flap"></div>
+          <div class="seal"><span>💗</span></div>
+        </div>
       </div>
     </div>
-
-    <div class="footer" id="footer">Tip: The “No” button behaves… until it gets suspicious.</div>
   </main>
 
 <script>
-  // Floating hearts background
-  const hearts = document.getElementById('hearts');
-  const heartChars = ["💗","💖","💘","💝","💕","💞","❤️"];
-  function makeHearts(){
-    hearts.innerHTML = "";
-    const count = 26;
-    for (let i=0;i<count;i++){
-      const s = document.createElement('div');
-      s.className = "heart";
-      s.textContent = heartChars[Math.floor(Math.random()*heartChars.length)];
-      s.style.left = Math.random()*100 + "vw";
-      s.style.top = (60 + Math.random()*60) + "vh";
-      s.style.animationDuration = (6 + Math.random()*8) + "s";
-      s.style.animationDelay = (-Math.random()*10) + "s";
-      hearts.appendChild(s);
-    }
-  }
-  makeHearts();
-  window.addEventListener('resize', makeHearts);
-
-  const arena = document.getElementById('arena');
-  const noBtn = document.getElementById('no');
-  const yesBtn = document.getElementById('yes');
-  const success = document.getElementById('success');
-  const sparkle = document.getElementById('sparkle');
-  const burst = document.getElementById('burst');
-
-  const questionTitle = document.getElementById('questionTitle');
-  const winTitle = document.getElementById('winTitle');
-  const subtitle = document.getElementById('subtitle');
-  const footer = document.getElementById('footer');
-
-  const photoWrap = document.getElementById('photoWrap');
-  const photoHint = document.getElementById('photoHint');
-
-  // ✅ No is calm until interaction
+  // --- No button behavior (calm on load, slippery after interaction) ---
+  const noBtn = document.getElementById("no");
+  const arena = document.getElementById("arena");
   let noIsActive = false;
 
   function activateNoTeleport(){
     if(noIsActive) return;
     noIsActive = true;
 
-    // convert current position to absolute (no jump)
-    const rect = arena.getBoundingClientRect();
-    const btnRect = noBtn.getBoundingClientRect();
+    const r = arena.getBoundingClientRect();
+    const b = noBtn.getBoundingClientRect();
 
     noBtn.style.position = "absolute";
-    noBtn.style.left = (btnRect.left - rect.left) + "px";
-    noBtn.style.top  = (btnRect.top  - rect.top ) + "px";
+    noBtn.style.left = (b.left - r.left) + "px";
+    noBtn.style.top  = (b.top  - r.top ) + "px";
   }
 
   function teleportNo(){
     if(!noIsActive) return;
-
-    const rect = arena.getBoundingClientRect();
-    const btnRect = noBtn.getBoundingClientRect();
-
-    const maxX = rect.width  - btnRect.width  - 8;
-    const maxY = rect.height - btnRect.height - 8;
-
-    const x = Math.random() * Math.max(0, maxX);
-    const y = Math.random() * Math.max(0, maxY);
-
-    noBtn.style.left = x + "px";
-    noBtn.style.top  = y + "px";
+    const r = arena.getBoundingClientRect();
+    const b = noBtn.getBoundingClientRect();
+    const maxX = r.width  - b.width  - 8;
+    const maxY = r.height - b.height - 8;
+    noBtn.style.left = (Math.random() * Math.max(0, maxX)) + "px";
+    noBtn.style.top  = (Math.random() * Math.max(0, maxY)) + "px";
   }
 
-  // ✅ Desktop: activate only after real mouse movement
   document.addEventListener("pointermove", (e)=>{
     if(e.pointerType === "mouse") activateNoTeleport();
   }, { once:true });
 
-  // ✅ Desktop: once active, if mouse gets close, it escapes
   arena.addEventListener("mousemove", (e)=>{
     if(!noIsActive) return;
     const b = noBtn.getBoundingClientRect();
@@ -373,7 +490,6 @@
     if(dist < 140) teleportNo();
   });
 
-  // ✅ Mobile: only move when touched/clicked
   noBtn.addEventListener("touchstart", (e)=>{
     activateNoTeleport();
     teleportNo();
@@ -386,73 +502,94 @@
     e.preventDefault();
   });
 
-  function heartBurst(){
-    burst.innerHTML = "";
-    const emojis = ["💖","💘","💕","💞","💝","💗","❤️"];
-    const n = 16;
-    for (let i=0;i<n;i++){
-      const s = document.createElement("span");
-      s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-      const angle = (Math.PI * 2) * (i / n);
-      const radius = 90 + Math.random()*40;
-      const dx = Math.cos(angle) * radius + (Math.random()*14 - 7);
-      const dy = Math.sin(angle) * radius + (Math.random()*14 - 7);
-      s.style.setProperty("--dx", dx + "px");
-      s.style.setProperty("--dy", dy + "px");
-      s.style.animationDelay = (Math.random()*80) + "ms";
-      burst.appendChild(s);
-    }
+  // --- Cutscene + transition ---
+  const yesBtn = document.getElementById("yes");
+  const cutscene = document.getElementById("cutscene");
+  const arrowSvg = document.querySelector(".arrowLayer");
+  const heart = document.getElementById("launchHeart");
+  const envelopeStage = document.getElementById("envelopeStage");
+  const envelope = document.getElementById("envelope");
+
+  const pageQuestion = document.getElementById("pageQuestion");
+  const pageInvite = document.getElementById("pageInvite");
+
+  function px(n){ return `${Math.round(n)}px`; }
+
+  function setArrowVars(){
+    // Compute start at heart location relative to the svg viewport
+    const cardRect = document.getElementById("card").getBoundingClientRect();
+    const heartRect = heart.getBoundingClientRect();
+
+    const startX = (heartRect.left + heartRect.width/2) - cardRect.left;
+    const startY = (heartRect.top  + heartRect.height/2) - cardRect.top;
+
+    // Mid and end points inside card coordinates (feel free to tweak)
+    const midX = cardRect.width * 0.62;
+    const midY = cardRect.height * 0.42;
+
+    const endX = cardRect.width * 0.92;
+    const endY = cardRect.height * 0.20;
+
+    // CSS variables used by keyframes
+    document.documentElement.style.setProperty("--ax0", px(startX));
+    document.documentElement.style.setProperty("--ay0", px(startY));
+    document.documentElement.style.setProperty("--ax1", px(midX));
+    document.documentElement.style.setProperty("--ay1", px(midY));
+    document.documentElement.style.setProperty("--ax2", px(endX));
+    document.documentElement.style.setProperty("--ay2", px(endY));
   }
 
-  function party(){
-    sparkle.innerHTML = "";
-    const n = 90;
-    const W = window.innerWidth, H = window.innerHeight;
-    for(let i=0;i<n;i++){
-      const d = document.createElement('div');
-      d.className = "confetti";
-      const hue = Math.floor(Math.random()*360);
-      d.style.background = `hsl(${hue} 90% 60%)`;
-      const x0 = (W/2) + (Math.random()*40 - 20);
-      const y0 = (H/2) + (Math.random()*40 - 20);
-      const x1 = x0 + (Math.random()*900 - 450);
-      const y1 = y0 + (Math.random()*700 - 350);
-      d.style.setProperty("--x0", x0 + "px");
-      d.style.setProperty("--y0", y0 + "px");
-      d.style.setProperty("--x1", x1 + "px");
-      d.style.setProperty("--y1", y1 + "px");
-      d.style.left = "0px";
-      d.style.top  = "0px";
-      sparkle.appendChild(d);
-    }
-    setTimeout(()=> sparkle.innerHTML="", 1400);
+  function startCutscene(){
+    // Wiggle the heart once to sell the launch
+    heart.classList.add("heartWiggle");
+    setTimeout(()=>heart.classList.remove("heartWiggle"), 1600);
+
+    setArrowVars();
+    cutscene.classList.add("show");
+
+    // Trigger arrow flight by toggling a class on the svg container
+    arrowSvg.classList.add("arrowFly");
+
+    // After arrow flies, show envelope
+    setTimeout(()=>{
+      envelopeStage.classList.add("showEnvelope");
+    }, 700);
+
+    // Open envelope after it appears
+    setTimeout(()=>{
+      envelope.classList.add("openEnvelope");
+    }, 1100);
+
+    // After envelope opens, transition to invite page
+    setTimeout(()=>{
+      // fade out cutscene overlay
+      cutscene.classList.add("fadeOutCutscene");
+
+      setTimeout(()=>{
+        cutscene.classList.remove("show");
+        cutscene.classList.remove("fadeOutCutscene");
+        arrowSvg.classList.remove("arrowFly");
+        envelopeStage.classList.remove("showEnvelope");
+        envelope.classList.remove("openEnvelope");
+
+        // switch pages
+        pageQuestion.classList.remove("active");
+        pageInvite.classList.add("active");
+        document.body.classList.add("yes-mode");
+      }, 520);
+    }, 1850);
   }
 
-  yesBtn.addEventListener('click', ()=>{
-    document.body.classList.add("yes-mode");
+  yesBtn.addEventListener("click", ()=>{
+    // Stop repeated clicks
+    yesBtn.disabled = true;
+    // start animation
+    startCutscene();
+  });
 
-    // ✅ Swap title
-    questionTitle.style.display = "none";
-    winTitle.style.display = "block";
-
-    // ✅ Hide buttons + intro
-    arena.style.display = "none";
-    subtitle.style.display = "none";
-    footer.style.display = "none";
-
-    // ✅ Show photo (click to open/save)
-    photoWrap.style.display = "block";
-    photoHint.style.display = "block";
-
-    // ✅ Show invite
-    success.style.display = "block";
-    requestAnimationFrame(()=> success.classList.add("show"));
-
-    heartBurst();
-    party();
-
-    // Scroll a tiny bit to make sure photo is visible on small screens
-    setTimeout(()=> winTitle.scrollIntoView({behavior:"smooth", block:"start"}), 50);
+  // keep arrow start correct on resize
+  window.addEventListener("resize", ()=>{
+    if(cutscene.classList.contains("show")) setArrowVars();
   });
 </script>
 </body>
