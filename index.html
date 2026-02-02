@@ -589,17 +589,17 @@
     // Envelope arrives (romantic entrance)
     setTimeout(()=>{
       envelopeStage.classList.add("showEnvelope");
-    }, 1400);
+    }, 700);
 
     // Seal breaks + flap opens + letter rises (slow and dramatic)
     setTimeout(()=>{
       envelope.classList.add("openEnvelope");
-    }, 3200);
+    }, 1700);
 
     // Let the open letter float for a while
     setTimeout(()=>{
       cutscene.classList.add("openHold");
-    }, 5000);
+    }, 2600);
 
     // Fade cutscene, then switch pages
     setTimeout(()=>{
@@ -613,8 +613,8 @@
 
         pageQuestion.classList.remove("active");
         pageInvite.classList.add("active");
-      }, 900);
-    }, 6800); // total romantic cutscene ~6.8s
+      }, 650);
+    }, 3600); // total romantic cutscene ~6.8s
   }
 
   yesBtn.addEventListener("click", startCutscene);
