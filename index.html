@@ -599,7 +599,7 @@
     // Let the open letter float for a while
     setTimeout(()=>{
       cutscene.classList.add("openHold");
-    }, 2600);
+    }, 1800);
 
     // Fade cutscene, then switch pages
     setTimeout(()=>{
@@ -613,8 +613,8 @@
 
         pageQuestion.classList.remove("active");
         pageInvite.classList.add("active");
-      }, 650);
-    }, 3600); // total romantic cutscene ~6.8s
+      }, 450);
+    }, 2600); // total romantic cutscene ~6.8s
   }
 
   yesBtn.addEventListener("click", startCutscene);
