@@ -27,10 +27,9 @@
     align-items:center;
     justify-content:center;
     padding:16px;
-    overflow:hidden; /* we keep everything on one screen by design */
+    overflow:hidden;
   }
 
-  /* card */
   .card{
     width:min(560px,96vw);
     background:var(--card);
@@ -70,7 +69,6 @@
     line-height:1.45;
   }
 
-  /* Yes button pulse */
   @keyframes yesPulse{
     0%,100%{transform:scale(1)}
     50%{transform:scale(1.035)}
@@ -106,7 +104,6 @@
     border:1px solid rgba(0,0,0,.1);
   }
 
-  /* Heart marker next to question (launch point) */
   .questionLine{
     display:flex;
     align-items:center;
@@ -120,7 +117,7 @@
     filter: drop-shadow(0 8px 10px rgba(0,0,0,.12));
   }
   .heartWiggle{
-    animation: heartWiggle .7s ease-in-out 2;
+    animation: heartWiggle .9s ease-in-out 2;
   }
   @keyframes heartWiggle{
     0%,100%{transform:scale(1) rotate(0deg)}
@@ -129,11 +126,9 @@
     75%{transform:scale(1.08) rotate(-6deg)}
   }
 
-  /* Two "pages" */
   .page{display:none;}
   .page.active{display:block;}
 
-  /* Invite view sizing so it fits without scroll (most screens) */
   .inviteWrap{
     display:flex;
     flex-direction:column;
@@ -148,7 +143,6 @@
       0 0 24px rgba(124,58,237,.20);
   }
 
-  /* Photo (click to open & save) */
   .photoWrap{
     margin:6px 0 10px;
     width:min(280px,78%);
@@ -169,7 +163,6 @@
     margin-top:-2px;
   }
 
-  /* Invite panel */
   .success{
     width:100%;
     padding:14px 14px;
@@ -190,7 +183,7 @@
     line-height:1.4;
   }
 
-  /* --- Cutscene overlay (arrow + envelope) --- */
+  /* --- Cutscene overlay --- */
   .cutscene{
     position:absolute;
     inset:0;
@@ -201,112 +194,95 @@
   }
   .cutscene.show{display:grid;}
 
-  /* Dim backdrop so animation reads */
   .cutsceneBackdrop{
     position:absolute;
     inset:0;
-    background: radial-gradient(circle at 50% 30%, rgba(255,255,255,.15), rgba(0,0,0,.18));
+    background: radial-gradient(circle at 50% 30%, rgba(255,255,255,.18), rgba(0,0,0,.18));
     opacity:0;
-    animation: fadeIn 500ms ease forwards;
+    animation: fadeIn 650ms ease forwards;
   }
-  @keyframes fadeIn{
-    to{opacity:1;}
-  }
+  @keyframes fadeIn{ to{opacity:1;} }
 
-  /* Arrow flight (SVG) */
-  .arrowLayer{
-    position:absolute;
-    inset:0;
-  }
-  .arrowSvg{
-    width:100%;
-    height:100%;
-    overflow:visible;
-  }
-  #arrowGroup{
-    opacity:0;
-    transform-origin: 0 0;
-  }
+  .arrowLayer{ position:absolute; inset:0; }
+  .arrowSvg{ width:100%; height:100%; overflow:visible; }
+  #arrowGroup{ opacity:0; transform-origin: 0 0; }
+
+  /* ✅ SLOWER arrow */
   .arrowFly #arrowGroup{
     opacity:1;
-    animation: arrowFly 900ms cubic-bezier(.2,.8,.2,1) forwards;
+    animation: arrowFly 1600ms cubic-bezier(.2,.8,.2,1) forwards;
   }
-  /* starts near the heart, then zooms toward viewer */
   @keyframes arrowFly{
     0%{
-      transform: translate(var(--ax0), var(--ay0)) scale(.6) rotate(-12deg);
+      transform: translate(var(--ax0), var(--ay0)) scale(.55) rotate(-12deg);
       filter: drop-shadow(0 4px 6px rgba(0,0,0,.15));
     }
-    65%{
-      transform: translate(var(--ax1), var(--ay1)) scale(1.1) rotate(10deg);
+    70%{
+      transform: translate(var(--ax1), var(--ay1)) scale(1.15) rotate(10deg);
       filter: drop-shadow(0 10px 18px rgba(0,0,0,.22));
+      opacity:1;
     }
     100%{
-      transform: translate(var(--ax2), var(--ay2)) scale(2.6) rotate(18deg);
+      transform: translate(var(--ax2), var(--ay2)) scale(2.2) rotate(18deg);
       opacity:0;
       filter: drop-shadow(0 16px 26px rgba(0,0,0,.25));
     }
   }
 
-  /* Envelope */
   .envelopeStage{
     position:relative;
     width:min(340px,78vw);
-    height:220px;
+    height:230px;
     display:grid;
     place-items:center;
-    transform: translateY(10px) scale(.96);
+    transform: translateY(16px) scale(.92);
     opacity:0;
   }
+  /* ✅ Slower envelope pop */
   .showEnvelope .envelopeStage{
     opacity:1;
-    animation: envPop 520ms ease forwards;
+    animation: envPop 900ms ease forwards;
   }
   @keyframes envPop{
-    from{transform: translateY(14px) scale(.92);}
+    from{transform: translateY(18px) scale(.90);}
     to{transform: translateY(0) scale(1);}
   }
 
   .envelope{
     position:relative;
     width:100%;
-    height:200px;
+    height:210px;
     border-radius:18px;
-    background: rgba(255,255,255,.95);
+    background: rgba(255,255,255,.97);
     box-shadow: 0 22px 55px rgba(0,0,0,.22);
     border:1px solid rgba(0,0,0,.08);
     overflow:hidden;
   }
 
-  /* Envelope flap */
   .flap{
     position:absolute;
     left:0; right:0;
     top:-6px;
-    height:120px;
-    background: linear-gradient(180deg, rgba(255,230,236,.95), rgba(255,255,255,.95));
+    height:130px;
+    background: linear-gradient(180deg, rgba(255,230,236,.98), rgba(255,255,255,.98));
     clip-path: polygon(0 0, 100% 0, 50% 88%);
     transform-origin: 50% 0%;
     transform: rotateX(0deg);
     z-index:3;
   }
-
-  /* Envelope body */
   .envBody{
     position:absolute;
     inset:0;
-    background:
-      linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,240,245,.95));
+    background: linear-gradient(180deg, rgba(255,255,255,.97), rgba(255,240,245,.97));
     z-index:1;
   }
 
-  /* Seal */
   .seal{
     position:absolute;
     left:50%;
-    top:92px;
-    width:56px;
-    height:56px;
+    top:98px;
+    width:58px;
+    height:58px;
     transform:translateX(-50%);
     border-radius:50%;
     background: radial-gradient(circle at 30% 30%, #ff9fb0, #ff4d6d);
@@ -315,21 +291,17 @@
     place-items:center;
     z-index:4;
   }
-  .seal span{
-    font-size:22px;
-    filter: drop-shadow(0 6px 10px rgba(0,0,0,.12));
-  }
+  .seal span{ font-size:22px; }
 
-  /* Letter card that slides up */
   .letter{
     position:absolute;
     left:50%;
-    bottom:-10px;
+    bottom:-12px;
     width:86%;
-    height:140px;
-    transform: translateX(-50%) translateY(120px);
+    height:150px;
+    transform: translateX(-50%) translateY(140px);
     border-radius:16px;
-    background: rgba(255,255,255,.98);
+    background: rgba(255,255,255,.99);
     border:1px solid rgba(0,0,0,.08);
     box-shadow: 0 14px 32px rgba(0,0,0,.16);
     z-index:2;
@@ -337,20 +309,22 @@
     place-items:center;
     padding:14px;
     text-align:center;
-    font-weight:850;
+    font-weight:900;
+    line-height:1.25;
   }
 
+  /* ✅ Slower, more visible opening */
   .openEnvelope .seal{
-    animation: sealPop 420ms ease forwards;
+    animation: sealPop 700ms ease forwards;
   }
   @keyframes sealPop{
-    0%{transform:translateX(-50%) scale(1);}
-    55%{transform:translateX(-50%) scale(1.15);}
-    100%{transform:translateX(-50%) scale(.01); opacity:0;}
+    0%{transform:translateX(-50%) scale(1);opacity:1}
+    55%{transform:translateX(-50%) scale(1.18);opacity:1}
+    100%{transform:translateX(-50%) scale(.01);opacity:0}
   }
 
   .openEnvelope .flap{
-    animation: flapOpen 600ms cubic-bezier(.2,.9,.2,1) forwards;
+    animation: flapOpen 1000ms cubic-bezier(.2,.9,.2,1) forwards;
   }
   @keyframes flapOpen{
     0%{transform: rotateX(0deg);}
@@ -358,22 +332,16 @@
   }
 
   .openEnvelope .letter{
-    animation: letterRise 720ms cubic-bezier(.2,.9,.2,1) forwards;
+    animation: letterRise 1200ms cubic-bezier(.2,.9,.2,1) forwards;
   }
   @keyframes letterRise{
-    0%{transform: translateX(-50%) translateY(120px);}
-    70%{transform: translateX(-50%) translateY(10px);}
+    0%{transform: translateX(-50%) translateY(140px);}
+    70%{transform: translateX(-50%) translateY(18px);}
     100%{transform: translateX(-50%) translateY(0px);}
   }
 
-  /* Final crossfade to invite page */
-  .fadeOutCutscene{
-    animation: fadeOut 520ms ease forwards;
-  }
-  @keyframes fadeOut{
-    to{opacity:0;}
-  }
-
+  .fadeOutCutscene{ animation: fadeOut 700ms ease forwards; }
+  @keyframes fadeOut{ to{opacity:0;} }
 </style>
 </head>
 
@@ -381,7 +349,6 @@
   <main class="card" id="card">
     <div class="badge">💌 A very serious question</div>
 
-    <!-- PAGE 1 -->
     <section class="page active" id="pageQuestion">
       <div class="questionLine">
         <h1 id="questionTitle">Will you be my Valentine, Rasika?</h1>
@@ -398,14 +365,12 @@
       </div>
     </section>
 
-    <!-- PAGE 2 -->
     <section class="page" id="pageInvite">
       <div class="inviteWrap">
         <h1 id="winTitle">YAYYYYY 💖✨ Valentine acquired. Now come here. 🫶</h1>
 
-        <!-- Image BETWEEN title and invite -->
-        <a class="photoWrap" id="photoWrap" href="couple.jpg?v=12" target="_blank" rel="noopener" aria-label="Open photo to save">
-          <img src="couple.jpg?v=12" alt="Us 💖">
+        <a class="photoWrap" href="couple.jpg?v=20" target="_blank" rel="noopener" aria-label="Open photo to save">
+          <img src="couple.jpg?v=20" alt="Us 💖">
         </a>
         <div class="photoHint">Tap the photo to open & save it 💾</div>
 
@@ -418,21 +383,16 @@
       </div>
     </section>
 
-    <!-- CUTSCENE OVERLAY -->
     <div class="cutscene" id="cutscene" aria-hidden="true">
       <div class="cutsceneBackdrop"></div>
 
-      <div class="arrowLayer">
+      <div class="arrowLayer" id="arrowLayer">
         <svg class="arrowSvg" viewBox="0 0 1000 600" preserveAspectRatio="none">
           <g id="arrowGroup">
-            <!-- simple cupid arrow -->
             <line x1="0" y1="0" x2="220" y2="0" stroke="rgba(30,41,59,.9)" stroke-width="8" stroke-linecap="round"/>
-            <!-- arrow head -->
             <polygon points="220,0 190,-18 190,18" fill="rgba(30,41,59,.9)"/>
-            <!-- fletching -->
             <polygon points="0,0 -26,-18 -20,0 -26,18" fill="rgba(255,77,109,.95)"/>
             <polygon points="-18,0 -44,-14 -38,0 -44,14" fill="rgba(255,77,109,.75)"/>
-            <!-- tiny heart charm -->
             <text x="120" y="10" font-size="32">💘</text>
           </g>
         </svg>
@@ -441,7 +401,7 @@
       <div class="envelopeStage" id="envelopeStage">
         <div class="envelope" id="envelope">
           <div class="envBody"></div>
-          <div class="letter">Sealed with love 💖</div>
+          <div class="letter">Sealed with love 💖<br/>Opening…</div>
           <div class="flap"></div>
           <div class="seal"><span>💗</span></div>
         </div>
@@ -450,7 +410,7 @@
   </main>
 
 <script>
-  // --- No button behavior (calm on load, slippery after interaction) ---
+  // No button behavior
   const noBtn = document.getElementById("no");
   const arena = document.getElementById("arena");
   let noIsActive = false;
@@ -458,15 +418,12 @@
   function activateNoTeleport(){
     if(noIsActive) return;
     noIsActive = true;
-
     const r = arena.getBoundingClientRect();
     const b = noBtn.getBoundingClientRect();
-
     noBtn.style.position = "absolute";
     noBtn.style.left = (b.left - r.left) + "px";
     noBtn.style.top  = (b.top  - r.top ) + "px";
   }
-
   function teleportNo(){
     if(!noIsActive) return;
     const r = arena.getBoundingClientRect();
@@ -491,46 +448,38 @@
   });
 
   noBtn.addEventListener("touchstart", (e)=>{
-    activateNoTeleport();
-    teleportNo();
-    e.preventDefault();
+    activateNoTeleport(); teleportNo(); e.preventDefault();
   }, {passive:false});
 
   noBtn.addEventListener("click", (e)=>{
-    activateNoTeleport();
-    teleportNo();
-    e.preventDefault();
+    activateNoTeleport(); teleportNo(); e.preventDefault();
   });
 
-  // --- Cutscene + transition ---
+  // Cutscene
   const yesBtn = document.getElementById("yes");
   const cutscene = document.getElementById("cutscene");
-  const arrowSvg = document.querySelector(".arrowLayer");
+  const arrowLayer = document.getElementById("arrowLayer");
   const heart = document.getElementById("launchHeart");
   const envelopeStage = document.getElementById("envelopeStage");
   const envelope = document.getElementById("envelope");
-
   const pageQuestion = document.getElementById("pageQuestion");
   const pageInvite = document.getElementById("pageInvite");
 
   function px(n){ return `${Math.round(n)}px`; }
 
   function setArrowVars(){
-    // Compute start at heart location relative to the svg viewport
     const cardRect = document.getElementById("card").getBoundingClientRect();
     const heartRect = heart.getBoundingClientRect();
 
     const startX = (heartRect.left + heartRect.width/2) - cardRect.left;
     const startY = (heartRect.top  + heartRect.height/2) - cardRect.top;
 
-    // Mid and end points inside card coordinates (feel free to tweak)
     const midX = cardRect.width * 0.62;
-    const midY = cardRect.height * 0.42;
+    const midY = cardRect.height * 0.44;
 
     const endX = cardRect.width * 0.92;
-    const endY = cardRect.height * 0.20;
+    const endY = cardRect.height * 0.22;
 
-    // CSS variables used by keyframes
     document.documentElement.style.setProperty("--ax0", px(startX));
     document.documentElement.style.setProperty("--ay0", px(startY));
     document.documentElement.style.setProperty("--ax1", px(midX));
@@ -540,54 +489,46 @@
   }
 
   function startCutscene(){
-    // Wiggle the heart once to sell the launch
     heart.classList.add("heartWiggle");
-    setTimeout(()=>heart.classList.remove("heartWiggle"), 1600);
+    setTimeout(()=>heart.classList.remove("heartWiggle"), 2000);
 
     setArrowVars();
     cutscene.classList.add("show");
 
-    // Trigger arrow flight by toggling a class on the svg container
-    arrowSvg.classList.add("arrowFly");
+    arrowLayer.classList.add("arrowFly");
 
-    // After arrow flies, show envelope
+    // ✅ show envelope earlier and let it sit
     setTimeout(()=>{
       envelopeStage.classList.add("showEnvelope");
-    }, 700);
+    }, 900);
 
-    // Open envelope after it appears
+    // ✅ open envelope slower
     setTimeout(()=>{
       envelope.classList.add("openEnvelope");
-    }, 1100);
+    }, 1900);
 
-    // After envelope opens, transition to invite page
+    // ✅ hold the open letter longer before switching pages
     setTimeout(()=>{
-      // fade out cutscene overlay
       cutscene.classList.add("fadeOutCutscene");
 
       setTimeout(()=>{
-        cutscene.classList.remove("show");
-        cutscene.classList.remove("fadeOutCutscene");
-        arrowSvg.classList.remove("arrowFly");
+        cutscene.classList.remove("show","fadeOutCutscene");
+        arrowLayer.classList.remove("arrowFly");
         envelopeStage.classList.remove("showEnvelope");
         envelope.classList.remove("openEnvelope");
 
-        // switch pages
         pageQuestion.classList.remove("active");
         pageInvite.classList.add("active");
         document.body.classList.add("yes-mode");
-      }, 520);
-    }, 1850);
+      }, 700);
+    }, 3800); // total cutscene length ~3.8s
   }
 
   yesBtn.addEventListener("click", ()=>{
-    // Stop repeated clicks
     yesBtn.disabled = true;
-    // start animation
     startCutscene();
   });
 
-  // keep arrow start correct on resize
   window.addEventListener("resize", ()=>{
     if(cutscene.classList.contains("show")) setArrowVars();
   });
