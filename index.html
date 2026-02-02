@@ -14,6 +14,10 @@
     --accent:#ff4d6d;
     --accent2:#7c3aed;
     --shadow:0 18px 50px rgba(0,0,0,.18);
+
+    /* Cutscene glow colors */
+    --glowPink: rgba(255,77,109,.45);
+    --glowViolet: rgba(124,58,237,.30);
   }
   *{box-sizing:border-box}
 
@@ -31,7 +35,7 @@
   }
 
   .card{
-    width:min(560px,96vw);
+    width:min(600px,96vw);
     background:var(--card);
     border-radius:32px;
     padding:22px 22px 26px;
@@ -49,15 +53,15 @@
     padding:8px 14px;
     border-radius:999px;
     font-size:14px;
-    font-weight:600;
+    font-weight:650;
     background:rgba(255,255,255,.85);
     border:1px solid rgba(0,0,0,.06);
   }
 
   h1{
     margin:0;
-    font-size:clamp(24px,4.8vw,42px);
-    line-height:1.15;
+    font-size:clamp(24px,4.8vw,44px);
+    line-height:1.13;
     letter-spacing:-0.02em;
   }
 
@@ -69,11 +73,7 @@
     line-height:1.45;
   }
 
-  @keyframes yesPulse{
-    0%,100%{transform:scale(1)}
-    50%{transform:scale(1.035)}
-  }
-
+  /* Buttons */
   .btnRow{
     display:flex;
     justify-content:center;
@@ -82,18 +82,24 @@
     position:relative;
     margin-top:6px;
   }
-
   button{
     border:none;
     border-radius:999px;
     padding:13px 24px;
     font-size:17px;
-    font-weight:750;
+    font-weight:780;
     cursor:pointer;
     box-shadow:0 10px 24px rgba(0,0,0,.15);
     -webkit-tap-highlight-color: transparent;
+    transition: transform .12s ease;
   }
+  button:active{ transform: scale(.98); }
 
+  /* Yes pulse */
+  @keyframes yesPulse{
+    0%,100%{transform:scale(1)}
+    50%{transform:scale(1.04)}
+  }
   #yes{
     background:linear-gradient(135deg,#ff4d6d,#ff8fab);
     color:#fff;
@@ -104,6 +110,7 @@
     border:1px solid rgba(0,0,0,.1);
   }
 
+  /* Heart launch point */
   .questionLine{
     display:flex;
     align-items:center;
@@ -116,16 +123,18 @@
     transform-origin:center;
     filter: drop-shadow(0 8px 10px rgba(0,0,0,.12));
   }
+
   .heartWiggle{
-    animation: heartWiggle .9s ease-in-out 2;
+    animation: heartWiggle 1.2s ease-in-out 2;
   }
   @keyframes heartWiggle{
     0%,100%{transform:scale(1) rotate(0deg)}
-    25%{transform:scale(1.08) rotate(-8deg)}
-    50%{transform:scale(1.1) rotate(8deg)}
-    75%{transform:scale(1.08) rotate(-6deg)}
+    20%{transform:scale(1.08) rotate(-10deg)}
+    50%{transform:scale(1.12) rotate(10deg)}
+    80%{transform:scale(1.08) rotate(-6deg)}
   }
 
+  /* Pages */
   .page{display:none;}
   .page.active{display:block;}
 
@@ -139,29 +148,22 @@
   #winTitle{
     font-weight:950;
     text-shadow:
-      0 0 10px rgba(255,77,109,.30),
-      0 0 24px rgba(124,58,237,.20);
+      0 0 12px rgba(255,77,109,.32),
+      0 0 26px rgba(124,58,237,.22);
   }
 
+  /* Image between title and invite */
   .photoWrap{
-    margin:6px 0 10px;
-    width:min(280px,78%);
+    margin:8px 0 10px;
+    width:min(260px,72%);
     border-radius:18px;
     overflow:hidden;
     border:2px solid rgba(255,255,255,.95);
-    box-shadow:0 12px 28px rgba(0,0,0,.20);
+    box-shadow:0 14px 34px rgba(0,0,0,.22);
     background:#fff;
   }
-  .photoWrap img{
-    width:100%;
-    height:auto;
-    display:block;
-  }
-  .photoHint{
-    font-size:12.5px;
-    opacity:.65;
-    margin-top:-2px;
-  }
+  .photoWrap img{ width:100%; height:auto; display:block; }
+  .photoHint{ font-size:12.5px; opacity:.65; margin-top:-2px; }
 
   .success{
     width:100%;
@@ -171,7 +173,7 @@
     border:1px solid rgba(124,58,237,.2);
   }
   .inviteLine{
-    font-weight:900;
+    font-weight:950;
     color:var(--accent2);
     font-size:clamp(14px,2.3vw,18px);
     line-height:1.35;
@@ -179,169 +181,227 @@
   }
   .success p{
     margin:0;
-    font-weight:800;
+    font-weight:850;
     line-height:1.4;
   }
 
-  /* --- Cutscene overlay --- */
+  /* ---------------- Romantic Cutscene ---------------- */
   .cutscene{
     position:absolute;
     inset:0;
     display:none;
     place-items:center;
-    z-index:20;
+    z-index:30;
     pointer-events:none;
+    opacity:1;
   }
   .cutscene.show{display:grid;}
 
+  /* Cinematic dim + dreamy glow */
   .cutsceneBackdrop{
     position:absolute;
     inset:0;
-    background: radial-gradient(circle at 50% 30%, rgba(255,255,255,.18), rgba(0,0,0,.18));
     opacity:0;
-    animation: fadeIn 650ms ease forwards;
+    background:
+      radial-gradient(circle at 50% 35%, rgba(255,255,255,.18), rgba(0,0,0,.24)),
+      radial-gradient(circle at 25% 20%, var(--glowPink), transparent 55%),
+      radial-gradient(circle at 75% 55%, var(--glowViolet), transparent 60%);
+    animation: backdropIn 900ms ease forwards;
   }
-  @keyframes fadeIn{ to{opacity:1;} }
+  @keyframes backdropIn{
+    to{opacity:1;}
+  }
 
+  /* Sparkles */
+  .sparkleField{
+    position:absolute;
+    inset:0;
+    opacity:0;
+    animation: sparkleIn 1200ms ease 500ms forwards;
+  }
+  @keyframes sparkleIn{ to{opacity:1;} }
+  .sparkleDot{
+    position:absolute;
+    width:6px; height:6px;
+    border-radius:50%;
+    background: rgba(255,255,255,.9);
+    box-shadow:
+      0 0 10px rgba(255,255,255,.6),
+      0 0 18px rgba(255,77,109,.22);
+    animation: twinkle 1.8s ease-in-out infinite;
+  }
+  @keyframes twinkle{
+    0%,100%{ transform: scale(.7); opacity:.35; }
+    50%{ transform: scale(1.15); opacity:1; }
+  }
+
+  /* Arrow */
   .arrowLayer{ position:absolute; inset:0; }
   .arrowSvg{ width:100%; height:100%; overflow:visible; }
   #arrowGroup{ opacity:0; transform-origin: 0 0; }
 
-  /* ✅ SLOWER arrow */
+  /* Dramatic arrow: slow, swooshy curve feel via easing */
   .arrowFly #arrowGroup{
     opacity:1;
-    animation: arrowFly 1600ms cubic-bezier(.2,.8,.2,1) forwards;
+    animation: arrowFly 2300ms cubic-bezier(.12,.9,.18,1) forwards;
   }
   @keyframes arrowFly{
     0%{
-      transform: translate(var(--ax0), var(--ay0)) scale(.55) rotate(-12deg);
-      filter: drop-shadow(0 4px 6px rgba(0,0,0,.15));
+      transform: translate(var(--ax0), var(--ay0)) scale(.55) rotate(-18deg);
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,.14));
     }
-    70%{
-      transform: translate(var(--ax1), var(--ay1)) scale(1.15) rotate(10deg);
-      filter: drop-shadow(0 10px 18px rgba(0,0,0,.22));
+    55%{
+      transform: translate(var(--ax1), var(--ay1)) scale(1.10) rotate(8deg);
+      filter: drop-shadow(0 14px 24px rgba(0,0,0,.22));
       opacity:1;
     }
+    80%{
+      transform: translate(calc(var(--ax1) + 40px), calc(var(--ay1) - 20px)) scale(1.45) rotate(16deg);
+    }
     100%{
-      transform: translate(var(--ax2), var(--ay2)) scale(2.2) rotate(18deg);
+      transform: translate(var(--ax2), var(--ay2)) scale(2.35) rotate(22deg);
       opacity:0;
-      filter: drop-shadow(0 16px 26px rgba(0,0,0,.25));
+      filter: drop-shadow(0 20px 34px rgba(0,0,0,.26));
     }
   }
 
+  /* Envelope stage */
   .envelopeStage{
     position:relative;
-    width:min(380px,86vw);
-    height:230px;
+    width:min(380px,84vw);
+    height:250px;
     display:grid;
     place-items:center;
-    transform: translateY(16px) scale(.92);
+    transform: translateY(24px) scale(.90);
     opacity:0;
   }
-  /* ✅ Slower envelope pop */
   .showEnvelope .envelopeStage{
     opacity:1;
-    animation: envPop 900ms ease forwards;
+    animation: envFloatIn 1400ms cubic-bezier(.14,.92,.18,1) forwards;
   }
-  @keyframes envPop{
-    from{transform: translateY(18px) scale(.90);}
-    to{transform: translateY(0) scale(1);}
+  @keyframes envFloatIn{
+    0%{ transform: translateY(34px) scale(.86); }
+    65%{ transform: translateY(-6px) scale(1.01); }
+    100%{ transform: translateY(0) scale(1); }
   }
 
   .envelope{
     position:relative;
     width:100%;
-    height:210px;
-    border-radius:18px;
-    background: rgba(255,255,255,.97);
-    box-shadow: 0 22px 55px rgba(0,0,0,.22);
+    height:230px;
+    border-radius:20px;
+    background: rgba(255,255,255,.98);
+    box-shadow:
+      0 26px 70px rgba(0,0,0,.22),
+      0 0 30px rgba(255,77,109,.10);
     border:1px solid rgba(0,0,0,.08);
     overflow:hidden;
+  }
+
+  .envBody{
+    position:absolute;
+    inset:0;
+    background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,240,245,.98));
+    z-index:1;
   }
 
   .flap{
     position:absolute;
     left:0; right:0;
     top:-6px;
-    height:130px;
-    background: linear-gradient(180deg, rgba(255,230,236,.98), rgba(255,255,255,.98));
+    height:140px;
+    background: linear-gradient(180deg, rgba(255,230,236,.99), rgba(255,255,255,.99));
     clip-path: polygon(0 0, 100% 0, 50% 88%);
     transform-origin: 50% 0%;
     transform: rotateX(0deg);
     z-index:3;
   }
-  .envBody{
-    position:absolute;
-    inset:0;
-    background: linear-gradient(180deg, rgba(255,255,255,.97), rgba(255,240,245,.97));
-    z-index:1;
-  }
 
+  /* Seal with romantic glow */
   .seal{
     position:absolute;
     left:50%;
-    top:98px;
-    width:58px;
-    height:58px;
+    top:104px;
+    width:64px;
+    height:64px;
     transform:translateX(-50%);
     border-radius:50%;
-    background: radial-gradient(circle at 30% 30%, #ff9fb0, #ff4d6d);
-    box-shadow: 0 12px 22px rgba(0,0,0,.18);
+    background: radial-gradient(circle at 30% 30%, #ffb1bf, #ff4d6d);
+    box-shadow:
+      0 14px 26px rgba(0,0,0,.18),
+      0 0 18px rgba(255,77,109,.22);
     display:grid;
     place-items:center;
     z-index:4;
   }
-  .seal span{ font-size:22px; }
+  .seal span{
+    font-size:24px;
+    filter: drop-shadow(0 8px 14px rgba(0,0,0,.14));
+  }
 
   .letter{
     position:absolute;
     left:50%;
-    bottom:-12px;
+    bottom:-14px;
     width:86%;
-    height:150px;
-    transform: translateX(-50%) translateY(140px);
-    border-radius:16px;
-    background: rgba(255,255,255,.99);
+    height:160px;
+    transform: translateX(-50%) translateY(170px);
+    border-radius:18px;
+    background: rgba(255,255,255,.995);
     border:1px solid rgba(0,0,0,.08);
-    box-shadow: 0 14px 32px rgba(0,0,0,.16);
+    box-shadow: 0 16px 40px rgba(0,0,0,.16);
     z-index:2;
     display:grid;
     place-items:center;
     padding:14px;
     text-align:center;
-    font-weight:900;
-    line-height:1.25;
+    font-weight:950;
+    line-height:1.22;
   }
 
-  /* ✅ Slower, more visible opening */
+  /* Open envelope: slower, lingering */
   .openEnvelope .seal{
-    animation: sealPop 700ms ease forwards;
+    animation: sealBloom 1100ms cubic-bezier(.18,.9,.18,1) forwards;
   }
-  @keyframes sealPop{
-    0%{transform:translateX(-50%) scale(1);opacity:1}
-    55%{transform:translateX(-50%) scale(1.18);opacity:1}
-    100%{transform:translateX(-50%) scale(.01);opacity:0}
+  @keyframes sealBloom{
+    0%{ transform:translateX(-50%) scale(1); opacity:1; }
+    40%{ transform:translateX(-50%) scale(1.22); opacity:1; }
+    65%{ transform:translateX(-50%) scale(.95); opacity:1; }
+    100%{ transform:translateX(-50%) scale(.01); opacity:0; }
   }
 
   .openEnvelope .flap{
-    animation: flapOpen 1000ms cubic-bezier(.2,.9,.2,1) forwards;
+    animation: flapOpen 1500ms cubic-bezier(.12,.92,.18,1) forwards;
   }
   @keyframes flapOpen{
-    0%{transform: rotateX(0deg);}
-    100%{transform: rotateX(72deg);}
+    0%{ transform: rotateX(0deg); }
+    100%{ transform: rotateX(74deg); }
   }
 
   .openEnvelope .letter{
-    animation: letterRise 1200ms cubic-bezier(.2,.9,.2,1) forwards;
+    animation: letterRise 1700ms cubic-bezier(.12,.92,.18,1) forwards;
   }
   @keyframes letterRise{
-    0%{transform: translateX(-50%) translateY(140px);}
-    70%{transform: translateX(-50%) translateY(18px);}
-    100%{transform: translateX(-50%) translateY(0px);}
+    0%{ transform: translateX(-50%) translateY(170px); }
+    65%{ transform: translateX(-50%) translateY(26px); }
+    100%{ transform: translateX(-50%) translateY(0px); }
   }
 
-  .fadeOutCutscene{ animation: fadeOut 700ms ease forwards; }
+  /* Gentle breathing float while it’s open */
+  .openHold .envelope{
+    animation: breathe 2000ms ease-in-out infinite;
+  }
+  @keyframes breathe{
+    0%,100%{ transform: translateY(0px); }
+    50%{ transform: translateY(-6px); }
+  }
+
+  /* Fade out cutscene */
+  .fadeOutCutscene{
+    animation: fadeOut 900ms ease forwards;
+  }
   @keyframes fadeOut{ to{opacity:0;} }
+
 </style>
 </head>
 
@@ -349,6 +409,7 @@
   <main class="card" id="card">
     <div class="badge">💌 A very serious question</div>
 
+    <!-- PAGE 1 -->
     <section class="page active" id="pageQuestion">
       <div class="questionLine">
         <h1 id="questionTitle">Will you be my Valentine, Rasika?</h1>
@@ -365,12 +426,13 @@
       </div>
     </section>
 
+    <!-- PAGE 2 -->
     <section class="page" id="pageInvite">
       <div class="inviteWrap">
         <h1 id="winTitle">YAYYYYY 💖✨ Valentine acquired. Now come here. 🫶</h1>
 
-        <a class="photoWrap" href="couple.jpg?v=20" target="_blank" rel="noopener" aria-label="Open photo to save">
-          <img src="couple.jpg?v=20" alt="Us 💖">
+        <a class="photoWrap" href="couple.jpg?v=30" target="_blank" rel="noopener" aria-label="Open photo to save">
+          <img src="couple.jpg?v=30" alt="Us 💖">
         </a>
         <div class="photoHint">Tap the photo to open & save it 💾</div>
 
@@ -383,17 +445,20 @@
       </div>
     </section>
 
+    <!-- CUTSCENE -->
     <div class="cutscene" id="cutscene" aria-hidden="true">
       <div class="cutsceneBackdrop"></div>
+
+      <div class="sparkleField" id="sparkleField" aria-hidden="true"></div>
 
       <div class="arrowLayer" id="arrowLayer">
         <svg class="arrowSvg" viewBox="0 0 1000 600" preserveAspectRatio="none">
           <g id="arrowGroup">
-            <line x1="0" y1="0" x2="220" y2="0" stroke="rgba(30,41,59,.9)" stroke-width="8" stroke-linecap="round"/>
-            <polygon points="220,0 190,-18 190,18" fill="rgba(30,41,59,.9)"/>
+            <line x1="0" y1="0" x2="230" y2="0" stroke="rgba(30,41,59,.92)" stroke-width="8" stroke-linecap="round"/>
+            <polygon points="230,0 200,-18 200,18" fill="rgba(30,41,59,.92)"/>
             <polygon points="0,0 -26,-18 -20,0 -26,18" fill="rgba(255,77,109,.95)"/>
             <polygon points="-18,0 -44,-14 -38,0 -44,14" fill="rgba(255,77,109,.75)"/>
-            <text x="120" y="10" font-size="32">💘</text>
+            <text x="128" y="10" font-size="34">💘</text>
           </g>
         </svg>
       </div>
@@ -401,7 +466,7 @@
       <div class="envelopeStage" id="envelopeStage">
         <div class="envelope" id="envelope">
           <div class="envBody"></div>
-          <div class="letter">Sealed with love 💖<br/>Opening…</div>
+          <div class="letter">Sealed with love 💖<br/>Just for you…</div>
           <div class="flap"></div>
           <div class="seal"><span>💗</span></div>
         </div>
@@ -410,7 +475,7 @@
   </main>
 
 <script>
-  // No button behavior
+  /* ---------------- No button logic ---------------- */
   const noBtn = document.getElementById("no");
   const arena = document.getElementById("arena");
   let noIsActive = false;
@@ -418,12 +483,14 @@
   function activateNoTeleport(){
     if(noIsActive) return;
     noIsActive = true;
+
     const r = arena.getBoundingClientRect();
     const b = noBtn.getBoundingClientRect();
     noBtn.style.position = "absolute";
     noBtn.style.left = (b.left - r.left) + "px";
     noBtn.style.top  = (b.top  - r.top ) + "px";
   }
+
   function teleportNo(){
     if(!noIsActive) return;
     const r = arena.getBoundingClientRect();
@@ -455,13 +522,30 @@
     activateNoTeleport(); teleportNo(); e.preventDefault();
   });
 
-  // Cutscene
+  /* ---------------- Sparkle generator ---------------- */
+  const sparkleField = document.getElementById("sparkleField");
+  function makeSparkles(){
+    sparkleField.innerHTML = "";
+    const n = 26;
+    for(let i=0;i<n;i++){
+      const d = document.createElement("div");
+      d.className = "sparkleDot";
+      d.style.left = (10 + Math.random()*80) + "%";
+      d.style.top  = (10 + Math.random()*70) + "%";
+      d.style.animationDelay = (Math.random()*1.6) + "s";
+      d.style.opacity = (0.35 + Math.random()*0.65).toFixed(2);
+      sparkleField.appendChild(d);
+    }
+  }
+
+  /* ---------------- Cutscene ---------------- */
   const yesBtn = document.getElementById("yes");
   const cutscene = document.getElementById("cutscene");
   const arrowLayer = document.getElementById("arrowLayer");
   const heart = document.getElementById("launchHeart");
   const envelopeStage = document.getElementById("envelopeStage");
   const envelope = document.getElementById("envelope");
+
   const pageQuestion = document.getElementById("pageQuestion");
   const pageInvite = document.getElementById("pageInvite");
 
@@ -474,11 +558,11 @@
     const startX = (heartRect.left + heartRect.width/2) - cardRect.left;
     const startY = (heartRect.top  + heartRect.height/2) - cardRect.top;
 
-    const midX = cardRect.width * 0.62;
-    const midY = cardRect.height * 0.44;
+    const midX = cardRect.width * 0.60;
+    const midY = cardRect.height * 0.46;
 
     const endX = cardRect.width * 0.92;
-    const endY = cardRect.height * 0.22;
+    const endY = cardRect.height * 0.24;
 
     document.documentElement.style.setProperty("--ax0", px(startX));
     document.documentElement.style.setProperty("--ay0", px(startY));
@@ -489,45 +573,50 @@
   }
 
   function startCutscene(){
+    yesBtn.disabled = true;
+    yesBtn.style.animation = "none";
+
     heart.classList.add("heartWiggle");
-    setTimeout(()=>heart.classList.remove("heartWiggle"), 2000);
+    setTimeout(()=>heart.classList.remove("heartWiggle"), 2600);
 
+    makeSparkles();
     setArrowVars();
-    cutscene.classList.add("show");
 
+    cutscene.classList.add("show");
     arrowLayer.classList.add("arrowFly");
 
-    // ✅ show envelope earlier and let it sit
+    // Envelope arrives (romantic entrance)
     setTimeout(()=>{
       envelopeStage.classList.add("showEnvelope");
-    }, 900);
+    }, 1400);
 
-    // ✅ open envelope slower
+    // Seal breaks + flap opens + letter rises (slow and dramatic)
     setTimeout(()=>{
       envelope.classList.add("openEnvelope");
-    }, 1900);
+    }, 3200);
 
-    // ✅ hold the open letter longer before switching pages
+    // Let the open letter float for a while
+    setTimeout(()=>{
+      cutscene.classList.add("openHold");
+    }, 5000);
+
+    // Fade cutscene, then switch pages
     setTimeout(()=>{
       cutscene.classList.add("fadeOutCutscene");
 
       setTimeout(()=>{
-        cutscene.classList.remove("show","fadeOutCutscene");
+        cutscene.classList.remove("show","fadeOutCutscene","openHold");
         arrowLayer.classList.remove("arrowFly");
         envelopeStage.classList.remove("showEnvelope");
         envelope.classList.remove("openEnvelope");
 
         pageQuestion.classList.remove("active");
         pageInvite.classList.add("active");
-        document.body.classList.add("yes-mode");
-      }, 700);
-    }, 3800); // total cutscene length ~3.8s
+      }, 900);
+    }, 6800); // total romantic cutscene ~6.8s
   }
 
-  yesBtn.addEventListener("click", ()=>{
-    yesBtn.disabled = true;
-    startCutscene();
-  });
+  yesBtn.addEventListener("click", startCutscene);
 
   window.addEventListener("resize", ()=>{
     if(cutscene.classList.contains("show")) setArrowVars();
